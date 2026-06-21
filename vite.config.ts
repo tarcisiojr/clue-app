@@ -11,6 +11,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Registramos o service worker manualmente em main.tsx para controlar
+      // a recarga automática e a checagem de atualização ao reabrir o app.
+      injectRegister: false,
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'Detetive — Marcador de Pistas',
@@ -45,6 +48,10 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        // Garante que a nova versão assuma e limpe caches antigos sem ficar presa.
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
       },
     }),
   ],
