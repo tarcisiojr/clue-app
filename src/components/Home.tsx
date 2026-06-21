@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { EDITIONS } from '../domain/editions'
+import { MODE_MOTIF, MODE_TAGLINE } from '../domain/theme'
 import { useGameStore } from '../state/gameStore'
 
 const PLAYER_OPTIONS = [2, 3, 4, 5, 6]
@@ -17,14 +18,16 @@ export function Home() {
   return (
     <div className="mx-auto flex min-h-full max-w-md flex-col gap-6 px-5 pb-8 pt-[calc(2rem_+_env(safe-area-inset-top))]">
       <header className="text-center">
-        <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-800 shadow-lg">
+        <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface shadow-lg">
           <svg viewBox="0 0 64 64" className="h-10 w-10">
             <circle cx="27" cy="27" r="16" fill="#384e75" stroke="#94a3b8" strokeWidth="4" />
             <line x1="40" y1="40" x2="54" y2="54" stroke="#f5c453" strokeWidth="7" strokeLinecap="round" />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-100">Detetive</h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <h1 className="font-display text-4xl font-bold tracking-tight text-ink">
+          Detetive
+        </h1>
+        <p className="mt-1 text-sm text-sub">
           Marcador inteligente de pistas — deduz por você.
         </p>
       </header>
@@ -32,14 +35,14 @@ export function Home() {
       {hasSaved && (
         <button
           onClick={resumeGame}
-          className="rounded-xl bg-amber-500 px-4 py-3 font-semibold text-slate-900 shadow transition active:scale-[0.99]"
+          className="rounded-xl bg-accent px-4 py-3 font-semibold text-slate-900 shadow transition active:scale-[0.99]"
         >
           ▶ Continuar partida
         </button>
       )}
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
           Modo de jogo
         </h2>
         <div className="grid grid-cols-2 gap-3">
@@ -51,13 +54,16 @@ export function Home() {
                 onClick={() => setEditionId(edition.id)}
                 className={`rounded-xl border-2 px-4 py-5 text-center transition ${
                   selected
-                    ? 'border-amber-500 bg-slate-800 text-slate-100'
-                    : 'border-slate-700 bg-slate-800/40 text-slate-300'
+                    ? 'border-accent bg-surface text-ink'
+                    : 'border-line bg-surface/40 text-sub'
                 }`}
               >
-                <div className="text-lg font-semibold">{edition.name}</div>
-                <div className="mt-1 text-xs text-slate-500">
-                  {edition.cards.length} cartas
+                <div className="text-3xl">{MODE_MOTIF[edition.id]}</div>
+                <div className="font-display mt-1 text-lg font-semibold">
+                  {edition.name}
+                </div>
+                <div className="mt-0.5 text-[11px] text-muted">
+                  {MODE_TAGLINE[edition.id]}
                 </div>
               </button>
             )
@@ -66,7 +72,7 @@ export function Home() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
           Número de jogadores
         </h2>
         <div className="grid grid-cols-5 gap-2">
@@ -78,8 +84,8 @@ export function Home() {
                 onClick={() => setPlayerCount(n)}
                 className={`rounded-lg border-2 py-3 text-lg font-semibold transition ${
                   selected
-                    ? 'border-amber-500 bg-slate-800 text-slate-100'
-                    : 'border-slate-700 bg-slate-800/40 text-slate-300'
+                    ? 'border-accent bg-surface text-ink'
+                    : 'border-line bg-surface/40 text-sub'
                 }`}
               >
                 {n}
@@ -87,7 +93,7 @@ export function Home() {
             )
           })}
         </div>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted">
           Inclui você. A dedução fica mais forte com 3 ou mais jogadores.
         </p>
       </section>
@@ -100,7 +106,7 @@ export function Home() {
       </button>
 
       {hasSaved && (
-        <p className="text-center text-xs text-amber-400/80">
+        <p className="text-center text-xs text-accent/80">
           Iniciar uma nova partida substitui a atual.
         </p>
       )}

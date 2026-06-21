@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { resolveEdition } from '../domain/editions'
+import { MODE_MOTIF } from '../domain/theme'
 import { useGameStore } from '../state/gameStore'
 import { SolutionPanel } from './SolutionPanel'
 import { Grid } from './Grid'
@@ -25,26 +26,29 @@ export function GameScreen() {
   return (
     <div className="mx-auto flex min-h-full max-w-md flex-col">
       {/* Cabeçalho */}
-      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-800 bg-slate-900/95 px-4 pb-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))] backdrop-blur">
-        <button onClick={goHome} className="text-sm text-slate-400">
+      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-app/95 px-4 pb-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))] backdrop-blur">
+        <button onClick={goHome} className="text-sm text-sub">
           ≡ Início
         </button>
-        <h1 className="text-base font-bold text-slate-100">{edition.name}</h1>
+        <h1 className="font-display flex items-center gap-1.5 text-lg font-bold text-ink">
+          <span>{MODE_MOTIF[game.editionId]}</span>
+          {edition.name}
+        </h1>
         <div className="relative">
           <button
             onClick={() => setShowMenu((v) => !v)}
-            className="px-2 text-lg text-slate-300"
+            className="px-2 text-lg text-sub"
           >
             ⋮
           </button>
           {showMenu && (
-            <div className="absolute right-0 top-9 z-30 w-44 overflow-hidden rounded-lg border border-slate-700 bg-slate-800 shadow-xl">
+            <div className="absolute right-0 top-9 z-30 w-44 overflow-hidden rounded-lg border border-line bg-surface shadow-xl">
               <button
                 onClick={() => {
                   setShowMenu(false)
                   goToSetup()
                 }}
-                className="block w-full px-4 py-2.5 text-left text-sm text-slate-200 hover:bg-slate-700"
+                className="block w-full px-4 py-2.5 text-left text-sm text-ink hover:bg-surface2"
               >
                 Reconfigurar partida
               </button>
@@ -71,7 +75,7 @@ export function GameScreen() {
           onCellTap={cycleManualMark}
         />
 
-        <p className="text-center text-[11px] text-slate-500">
+        <p className="text-center text-[11px] text-muted">
           ✓ tem · ✕ não tem · vazio = indefinido. Toque numa célula para marcar
           manualmente (• azul).
         </p>
@@ -88,7 +92,7 @@ export function GameScreen() {
       <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-md px-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] pt-2">
         <button
           onClick={() => setShowModal(true)}
-          className="w-full rounded-xl bg-amber-500 px-4 py-4 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
+          className="w-full rounded-xl bg-accent px-4 py-4 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
         >
           + Registrar palpite
         </button>

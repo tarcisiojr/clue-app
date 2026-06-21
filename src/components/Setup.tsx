@@ -30,33 +30,33 @@ export function Setup() {
   return (
     <div className="mx-auto flex min-h-full max-w-md flex-col gap-6 px-4 pb-6 pt-[calc(1.5rem_+_env(safe-area-inset-top))]">
       <header className="flex items-center justify-between">
-        <button onClick={abandonGame} className="text-sm text-slate-400">
+        <button onClick={abandonGame} className="text-sm text-sub">
           ← Sair
         </button>
-        <h1 className="text-lg font-bold text-slate-100">
-          Configurar — {edition.name}
+        <h1 className="font-display text-lg font-bold text-ink">
+          {edition.name}
         </h1>
         <span className="w-10" />
       </header>
 
       {/* Jogadores */}
       <section className="flex flex-col gap-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
           Jogadores e mãos
         </h2>
         <div className="flex flex-col gap-2">
           {game.players.map((player, index) => (
             <div
               key={player.id}
-              className="flex items-center gap-2 rounded-lg bg-slate-800/60 p-2"
+              className="flex items-center gap-2 rounded-lg bg-surface/60 p-2"
             >
               <button
                 onClick={() => setMe(index)}
                 title="Marcar como você"
                 className={`h-9 shrink-0 rounded-md px-2 text-xs font-bold transition ${
                   player.isMe
-                    ? 'bg-amber-500 text-slate-900'
-                    : 'bg-slate-700 text-slate-300'
+                    ? 'bg-accent text-slate-900'
+                    : 'bg-surface2 text-sub'
                 }`}
               >
                 {player.isMe ? 'VOCÊ' : 'eu?'}
@@ -64,21 +64,21 @@ export function Setup() {
               <input
                 value={player.name}
                 onChange={(e) => setPlayerName(index, e.target.value)}
-                className="min-w-0 flex-1 rounded-md bg-slate-900 px-2 py-2 text-slate-100 outline-none focus:ring-1 focus:ring-amber-500"
+                className="min-w-0 flex-1 rounded-md bg-app px-2 py-2 text-ink outline-none focus:ring-1 focus:ring-accent"
               />
               <div className="flex shrink-0 items-center gap-1">
                 <button
                   onClick={() => setHandSize(index, player.handSize - 1)}
-                  className="h-9 w-9 rounded-md bg-slate-700 text-lg text-slate-200"
+                  className="h-9 w-9 rounded-md bg-surface2 text-lg text-ink"
                 >
                   −
                 </button>
-                <span className="w-6 text-center tabular-nums text-slate-200">
+                <span className="w-6 text-center tabular-nums text-ink">
                   {player.handSize}
                 </span>
                 <button
                   onClick={() => setHandSize(index, player.handSize + 1)}
-                  className="h-9 w-9 rounded-md bg-slate-700 text-lg text-slate-200"
+                  className="h-9 w-9 rounded-md bg-surface2 text-lg text-ink"
                 >
                   +
                 </button>
@@ -86,7 +86,7 @@ export function Setup() {
             </div>
           ))}
         </div>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted">
           O número é a quantidade de cartas na mão de cada jogador.
         </p>
       </section>
@@ -94,12 +94,12 @@ export function Setup() {
       {/* Sua mão */}
       <section className="flex flex-col gap-3">
         <div className="flex items-baseline justify-between">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
             Suas cartas
           </h2>
           <span
             className={`text-xs font-semibold ${
-              handMismatch ? 'text-amber-400' : 'text-emerald-400'
+              handMismatch ? 'text-accent' : 'text-emerald-400'
             }`}
           >
             {handSelected} / {handTarget}
@@ -107,7 +107,7 @@ export function Setup() {
         </div>
         {CATEGORY_ORDER.map((category) => (
           <div key={category}>
-            <div className="mb-1 text-[11px] font-semibold uppercase text-slate-500">
+            <div className="mb-1 text-[11px] font-semibold uppercase text-muted">
               {CATEGORY_LABELS[category]}
             </div>
             <div className="flex flex-wrap gap-2">
@@ -122,7 +122,7 @@ export function Setup() {
                       className={`rounded-full border px-3 py-1.5 text-sm transition ${
                         selected
                           ? 'border-emerald-500 bg-emerald-500/20 text-emerald-200'
-                          : 'border-slate-700 bg-slate-800/40 text-slate-300'
+                          : 'border-line bg-surface/40 text-sub'
                       }`}
                     >
                       {card.name}
@@ -138,19 +138,19 @@ export function Setup() {
       <section className="flex flex-col gap-2">
         <button
           onClick={() => setShowNames((v) => !v)}
-          className="flex items-center justify-between rounded-lg bg-slate-800/60 px-3 py-2 text-sm text-slate-300"
+          className="flex items-center justify-between rounded-lg bg-surface/60 px-3 py-2 text-sm text-sub"
         >
           <span>Editar nomes das cartas</span>
           <span>{showNames ? '▲' : '▼'}</span>
         </button>
         {showNames && (
-          <div className="flex flex-col gap-3 rounded-lg bg-slate-800/40 p-3">
-            <p className="text-xs text-slate-500">
+          <div className="flex flex-col gap-3 rounded-lg bg-surface/40 p-3">
+            <p className="text-xs text-muted">
               Ajuste os nomes conforme suas cartas (ex.: locais do modo Praia).
             </p>
             {CATEGORY_ORDER.map((category) => (
               <div key={category} className="flex flex-col gap-1.5">
-                <div className="text-[11px] font-semibold uppercase text-slate-500">
+                <div className="text-[11px] font-semibold uppercase text-muted">
                   {CATEGORY_LABELS[category]}
                 </div>
                 {baseEdition.cards
@@ -161,7 +161,7 @@ export function Setup() {
                       defaultValue={game.cardNames[card.id] ?? card.name}
                       onBlur={(e) => renameCard(card.id, e.target.value)}
                       placeholder={card.name}
-                      className="rounded-md bg-slate-900 px-2 py-1.5 text-sm text-slate-100 outline-none focus:ring-1 focus:ring-amber-500"
+                      className="rounded-md bg-app px-2 py-1.5 text-sm text-ink outline-none focus:ring-1 focus:ring-accent"
                     />
                   ))}
               </div>

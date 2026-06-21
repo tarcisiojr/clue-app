@@ -2,6 +2,7 @@ import {
   CATEGORY_HEADERS,
   CATEGORY_ORDER,
 } from '../domain/editions'
+import { CATEGORY_ICON } from '../domain/theme'
 import type { Edition } from '../domain/types'
 import type { InferenceResult } from '../engine/inference'
 
@@ -24,14 +25,14 @@ export function SolutionPanel({ edition, result }: Props) {
       className={`rounded-xl border p-3 ${
         allSolved
           ? 'border-emerald-500 bg-emerald-500/10'
-          : 'border-slate-700 bg-slate-800/50'
+          : 'border-line bg-surface/50'
       }`}
     >
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-200">
+        <h2 className="font-display text-lg font-semibold text-ink">
           {allSolved ? '🎉 Crime resolvido!' : 'Solução'}
         </h2>
-        <span className="text-xs text-slate-400">{solvedCount}/3</span>
+        <span className="text-xs text-sub">{solvedCount}/3</span>
       </div>
       <div className="grid grid-cols-3 gap-2">
         {CATEGORY_ORDER.map((category) => {
@@ -41,18 +42,19 @@ export function SolutionPanel({ edition, result }: Props) {
             <div
               key={category}
               className={`rounded-lg p-2 text-center ${
-                solved ? 'bg-emerald-500/20' : 'bg-slate-900/60'
+                solved ? 'bg-emerald-500/20' : 'bg-app/60'
               }`}
             >
-              <div className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
+              <div className="text-lg leading-none">{CATEGORY_ICON[category]}</div>
+              <div className="mt-1 text-[10px] font-bold uppercase tracking-wide text-muted">
                 {CATEGORY_HEADERS[category]}
               </div>
               {solved ? (
-                <div className="mt-1 text-sm font-bold text-emerald-300">
+                <div className="font-display mt-1 text-sm font-bold text-emerald-300">
                   {nameOf(sol.cardId!)}
                 </div>
               ) : (
-                <div className="mt-1 text-xs text-slate-400">
+                <div className="mt-1 text-xs text-sub">
                   {sol.candidates.length} possíveis
                 </div>
               )}

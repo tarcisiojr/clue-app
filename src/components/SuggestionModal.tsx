@@ -63,12 +63,12 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60">
-      <div className="flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl bg-slate-900">
-        <header className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
-          <button onClick={onClose} className="text-sm text-slate-400">
+      <div className="flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl bg-app">
+        <header className="flex items-center justify-between border-b border-line px-4 py-3">
+          <button onClick={onClose} className="text-sm text-sub">
             Cancelar
           </button>
-          <h2 className="font-bold text-slate-100">Registrar palpite</h2>
+          <h2 className="font-bold text-ink">Registrar palpite</h2>
           <button
             onClick={handleSave}
             className="rounded-lg bg-emerald-500 px-3 py-1.5 text-sm font-bold text-slate-900"
@@ -80,7 +80,7 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
         <div className="flex flex-col gap-4 overflow-y-auto px-4 pt-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))]">
           {/* Quem fez o palpite */}
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">
+            <label className="mb-1 block text-xs font-semibold uppercase text-muted">
               Quem fez o palpite
             </label>
             <div className="flex flex-wrap gap-2">
@@ -90,8 +90,8 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
                   onClick={() => setSuggesterId(p.id)}
                   className={`rounded-full border px-3 py-1.5 text-sm ${
                     p.id === suggesterId
-                      ? 'border-amber-500 bg-amber-500/20 text-amber-200'
-                      : 'border-slate-700 text-slate-300'
+                      ? 'border-accent bg-accent/20 text-accent'
+                      : 'border-line text-sub'
                   }`}
                 >
                   {p.name}
@@ -105,7 +105,7 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
           <div className="flex flex-col gap-2">
             {CATEGORY_ORDER.map((category) => (
               <div key={category}>
-                <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">
+                <label className="mb-1 block text-xs font-semibold uppercase text-muted">
                   {CATEGORY_LABELS[category]}
                 </label>
                 <select
@@ -113,7 +113,7 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
                   onChange={(e) =>
                     setPicks((p) => ({ ...p, [category]: e.target.value }))
                   }
-                  className="w-full rounded-lg bg-slate-800 px-3 py-2.5 text-slate-100 outline-none focus:ring-1 focus:ring-amber-500"
+                  className="w-full rounded-lg bg-surface px-3 py-2.5 text-ink outline-none focus:ring-1 focus:ring-accent"
                 >
                   {edition.cards
                     .filter((c) => c.category === category)
@@ -129,7 +129,7 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
 
           {/* Respostas dos jogadores */}
           <div className="flex flex-col gap-2">
-            <label className="block text-xs font-semibold uppercase text-slate-500">
+            <label className="block text-xs font-semibold uppercase text-muted">
               Respostas (sentido horário)
             </label>
             {players
@@ -139,13 +139,13 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
                 return (
                   <div
                     key={p.id}
-                    className="rounded-lg bg-slate-800/60 p-2"
+                    className="rounded-lg bg-surface/60 p-2"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="min-w-0 flex-1 truncate text-sm text-slate-200">
+                      <span className="min-w-0 flex-1 truncate text-sm text-ink">
                         {p.name}
                       </span>
-                      <div className="flex shrink-0 overflow-hidden rounded-md border border-slate-700">
+                      <div className="flex shrink-0 overflow-hidden rounded-md border border-line">
                         {(
                           [
                             ['none', '—'],
@@ -162,8 +162,8 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
                                   ? 'bg-emerald-500 text-slate-900'
                                   : kind === 'pass'
                                     ? 'bg-rose-500 text-slate-900'
-                                    : 'bg-slate-600 text-slate-100'
-                                : 'text-slate-400'
+                                    : 'bg-surface2 text-ink'
+                                : 'text-sub'
                             }`}
                           >
                             {label}
@@ -173,7 +173,7 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
                     </div>
                     {r.kind === 'showed' && (
                       <div className="mt-2">
-                        <label className="mb-1 block text-[11px] text-slate-500">
+                        <label className="mb-1 block text-[11px] text-muted">
                           Qual carta? (só se você viu)
                         </label>
                         <select
@@ -184,7 +184,7 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
                               cardShown: e.target.value || undefined,
                             })
                           }
-                          className="w-full rounded-md bg-slate-900 px-2 py-2 text-sm text-slate-100 outline-none focus:ring-1 focus:ring-amber-500"
+                          className="w-full rounded-md bg-app px-2 py-2 text-sm text-ink outline-none focus:ring-1 focus:ring-accent"
                         >
                           <option value="">Não vi qual</option>
                           {chosenCards.map((id) => {

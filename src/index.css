@@ -1,9 +1,43 @@
+@import '@fontsource-variable/playfair-display';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: dark;
+
+  /* Tema padrão = Mansão (noir / madeira / dourado) */
+  --c-app: 23 18 13;
+  --c-surface: 38 29 21;
+  --c-surface2: 56 42 28;
+  --c-line: 74 58 40;
+  --c-ink: 243 237 227;
+  --c-sub: 197 178 152;
+  --c-muted: 138 120 97;
+  --c-accent: 212 175 55;
+}
+
+[data-theme='mansao'] {
+  --c-app: 23 18 13;
+  --c-surface: 38 29 21;
+  --c-surface2: 56 42 28;
+  --c-line: 74 58 40;
+  --c-ink: 243 237 227;
+  --c-sub: 197 178 152;
+  --c-muted: 138 120 97;
+  --c-accent: 212 175 55;
+}
+
+[data-theme='praia'] {
+  --c-app: 6 32 46;
+  --c-surface: 12 50 68;
+  --c-surface2: 17 67 90;
+  --c-line: 29 95 122;
+  --c-ink: 233 250 255;
+  --c-sub: 159 196 214;
+  --c-muted: 110 150 170;
+  --c-accent: 34 211 238;
 }
 
 html,
@@ -14,10 +48,35 @@ body,
 
 body {
   margin: 0;
-  background-color: #0f172a;
-  color: #e2e8f0;
+  background-color: rgb(var(--c-app));
+  color: rgb(var(--c-ink));
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Fundo temático aplicado no contêiner raiz do app */
+.app-bg {
+  min-height: 100%;
+  background-color: rgb(var(--c-app));
+  background-attachment: fixed;
+}
+
+[data-theme='mansao'] .app-bg {
+  background-image:
+    radial-gradient(130% 90% at 50% -15%, rgba(212, 175, 55, 0.12), transparent 55%),
+    radial-gradient(120% 80% at 100% 100%, rgba(120, 30, 40, 0.18), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+[data-theme='praia'] .app-bg {
+  background-image:
+    linear-gradient(180deg, rgba(34, 211, 238, 0.14), transparent 35%),
+    radial-gradient(120% 70% at 50% 110%, rgba(250, 204, 92, 0.12), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+.font-display {
+  font-family: 'Playfair Display Variable', Georgia, serif;
 }
 
 /* Evita zoom indesejado em inputs no iOS (fonte >= 16px) */

@@ -2,6 +2,7 @@ import {
   CATEGORY_HEADERS,
   CATEGORY_ORDER,
 } from '../domain/editions'
+import { CATEGORY_ICON } from '../domain/theme'
 import {
   ENVELOPE,
   cellKey,
@@ -28,8 +29,8 @@ function symbol(state: CellState): string {
 
 function cellClasses(state: CellState): string {
   if (state === 'has') return 'bg-emerald-500/25 text-emerald-300'
-  if (state === 'not') return 'text-slate-600'
-  return 'text-slate-700'
+  if (state === 'not') return 'text-muted'
+  return 'text-muted'
 }
 
 export function Grid({
@@ -42,11 +43,11 @@ export function Grid({
   const owners = [...players, { id: ENVELOPE, name: 'Env.', isMe: false, handSize: 0 }]
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-700">
+    <div className="overflow-x-auto rounded-xl border border-line">
       <table className="w-full border-collapse text-center">
         <thead>
-          <tr className="bg-slate-800">
-            <th className="sticky left-0 z-10 bg-slate-800 px-2 py-2 text-left text-[11px] font-semibold text-slate-400">
+          <tr className="bg-surface">
+            <th className="sticky left-0 z-10 bg-surface px-2 py-2 text-left text-[11px] font-semibold text-sub">
               Carta
             </th>
             {owners.map((owner) => (
@@ -54,10 +55,10 @@ export function Grid({
                 key={owner.id}
                 className={`px-1 py-2 text-[11px] font-semibold ${
                   owner.id === ENVELOPE
-                    ? 'text-amber-400'
+                    ? 'text-accent'
                     : owner.isMe
-                      ? 'text-amber-300'
-                      : 'text-slate-300'
+                      ? 'text-accent'
+                      : 'text-sub'
                 }`}
               >
                 <div className="mx-auto max-w-[3.5rem] truncate" title={owner.name}>
@@ -73,7 +74,7 @@ export function Grid({
             return (
               <CategoryRows
                 key={category}
-                header={CATEGORY_HEADERS[category]}
+                header={`${CATEGORY_ICON[category]} ${CATEGORY_HEADERS[category]}`}
                 cards={cards}
                 owners={owners}
                 result={result}
@@ -108,7 +109,7 @@ function CategoryRows({
       <tr>
         <td
           colSpan={owners.length + 1}
-          className="sticky left-0 bg-slate-900 px-2 py-1 text-left text-[10px] font-bold uppercase tracking-wider text-amber-500/80"
+          className="sticky left-0 bg-app px-2 py-1 text-left text-[10px] font-bold uppercase tracking-wider text-accent/80"
         >
           {header}
         </td>
@@ -118,15 +119,15 @@ function CategoryRows({
         return (
           <tr
             key={card.id}
-            className={`border-t border-slate-800 ${
-              isSolution ? 'bg-amber-500/10' : ''
+            className={`border-t border-line ${
+              isSolution ? 'bg-accent/10' : ''
             }`}
           >
             <td
               className={`sticky left-0 z-10 max-w-[7.5rem] truncate px-2 py-2 text-left text-sm ${
                 isSolution
-                  ? 'bg-slate-900 font-semibold text-amber-300'
-                  : 'bg-slate-900 text-slate-200'
+                  ? 'bg-app font-semibold text-accent'
+                  : 'bg-app text-ink'
               }`}
               title={card.name}
             >
@@ -136,7 +137,7 @@ function CategoryRows({
               const state = result.grid[card.id]?.[owner.id] ?? 'unknown'
               const isManual = manualMarks[cellKey(card.id, owner.id)] !== undefined
               return (
-                <td key={owner.id} className="border-l border-slate-800 p-0">
+                <td key={owner.id} className="border-l border-line p-0">
                   <button
                     onClick={() => onCellTap(card.id, owner.id)}
                     className={`relative flex h-10 w-full items-center justify-center text-base font-bold ${cellClasses(
