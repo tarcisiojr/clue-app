@@ -25,7 +25,7 @@ export function GameScreen() {
   return (
     <div className="mx-auto flex min-h-full max-w-md flex-col">
       {/* Cabeçalho */}
-      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-800 bg-slate-900/95 px-4 py-3 backdrop-blur">
+      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-800 bg-slate-900/95 px-4 pb-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))] backdrop-blur">
         <button onClick={goHome} className="text-sm text-slate-400">
           ≡ Início
         </button>
@@ -53,7 +53,7 @@ export function GameScreen() {
         </div>
       </header>
 
-      <div className="flex flex-col gap-4 px-4 py-4 pb-24">
+      <div className="flex flex-col gap-4 px-4 pt-4 pb-[calc(7rem_+_env(safe-area-inset-bottom))]">
         {result.contradiction && (
           <div className="rounded-lg border border-rose-500 bg-rose-500/15 px-3 py-2 text-sm text-rose-200">
             ⚠ Há informações contraditórias. Revise o histórico ou as marcações
@@ -85,7 +85,7 @@ export function GameScreen() {
       </div>
 
       {/* Botão de ação fixo */}
-      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-md px-4 pb-4">
+      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-md px-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] pt-2">
         <button
           onClick={() => setShowModal(true)}
           className="w-full rounded-xl bg-amber-500 px-4 py-4 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"

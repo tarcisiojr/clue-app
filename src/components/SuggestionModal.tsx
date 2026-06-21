@@ -77,7 +77,7 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
           </button>
         </header>
 
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 py-4">
+        <div className="flex flex-col gap-4 overflow-y-auto px-4 pt-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))]">
           {/* Quem fez o palpite */}
           <div>
             <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">

@@ -28,7 +28,7 @@ export function Setup() {
   const handMismatch = handSelected !== handTarget
 
   return (
-    <div className="mx-auto flex min-h-full max-w-md flex-col gap-6 px-4 py-6">
+    <div className="mx-auto flex min-h-full max-w-md flex-col gap-6 px-4 pb-6 pt-[calc(1.5rem_+_env(safe-area-inset-top))]">
       <header className="flex items-center justify-between">
         <button onClick={abandonGame} className="text-sm text-slate-400">
           ← Sair
@@ -172,7 +172,7 @@ export function Setup() {
 
       <button
         onClick={startGame}
-        className="sticky bottom-4 mt-2 rounded-xl bg-emerald-500 px-4 py-4 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
+        className="sticky bottom-[calc(1rem_+_env(safe-area-inset-bottom))] mt-2 rounded-xl bg-emerald-500 px-4 py-4 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
       >
         Começar partida
       </button>
