@@ -27,7 +27,7 @@ export default {
         onError: token('--c-on-error'), // on-error
       },
       fontFamily: {
-        display: ['"Playfair Display Variable"', 'Georgia', 'serif'],
+        sans: ['"Manrope Variable"', 'system-ui', 'sans-serif'],
       },
     },
   },

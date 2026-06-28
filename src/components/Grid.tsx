@@ -18,22 +18,15 @@ interface Props {
   onCellTap: (cardId: string, ownerId: string) => void
 }
 
-// Larguras fixas para a tabela transbordar e rolar na horizontal quando há
-// muitos jogadores (em vez de espremer as colunas).
-const NAME_COL = 'w-[116px] min-w-[116px]'
-const OWNER_COL = 'w-[52px] min-w-[52px]'
-
 function symbol(state: CellState): string {
   if (state === 'has') return '✓'
   if (state === 'not') return '✕'
   return ''
 }
 
-function cellClasses(state: CellState): string {
-  if (state === 'has') return 'text-emerald-300'
-  if (state === 'not') return 'text-muted/60'
-  return ''
-}
+// Coluna fixa (nome da carta): opaca, com borda à direita para um recorte
+// limpo quando a tabela rola na horizontal.
+const STICKY = 'sticky left-0 z-20 border-r border-line'
 
 export function Grid({ edition, result, players, manualMarks, onCellTap }: Props) {
   const owners = [
@@ -42,23 +35,24 @@ export function Grid({ edition, result, players, manualMarks, onCellTap }: Props
   ]
 
   return (
-    <div className="md-elev-1 overflow-x-auto rounded-2xl bg-surface">
-      <table className="border-separate border-spacing-0 text-center">
+    <div className="md-elev-1 h-full overflow-auto rounded-2xl bg-surface">
+      <table className="w-full border-collapse text-center">
         <thead>
+          {/* Cabeçalho congelado no topo ao rolar verticalmente. */}
           <tr>
             <th
-              className={`sticky left-0 z-20 bg-surface2 px-3 py-2.5 text-left text-[11px] font-semibold text-sub ${NAME_COL}`}
+              className="sticky left-0 top-0 z-40 border-r border-line bg-surface2 px-2 py-2 text-left text-[11px] font-semibold text-sub"
             >
-              Carta
+              <div className="w-[80px]">Carta</div>
             </th>
             {owners.map((owner) => (
               <th
                 key={owner.id}
-                className={`bg-surface2 px-1 py-2.5 text-[11px] font-semibold ${OWNER_COL} ${
+                className={`sticky top-0 z-30 min-w-[44px] bg-surface2 px-1 py-2 text-[11px] font-semibold ${
                   owner.id === ENVELOPE || owner.isMe ? 'text-accent' : 'text-sub'
                 }`}
               >
-                <div className="mx-auto max-w-[3rem] truncate" title={owner.name}>
+                <div className="mx-auto max-w-[42px] truncate" title={owner.name}>
                   {owner.id === ENVELOPE ? '📩' : owner.name}
                 </div>
               </th>
@@ -106,29 +100,36 @@ function CategoryRows({
       <tr>
         <td
           colSpan={owners.length + 1}
-          className="sticky left-0 z-10 bg-app/60 px-3 py-1.5 text-left text-[10px] font-bold uppercase tracking-wider text-accent"
+          className="bg-app px-2 py-1 text-left text-[10px] font-bold uppercase tracking-wider text-accent"
         >
-          {header}
+          {/* Rótulo da categoria fixo à esquerda ao rolar na horizontal. */}
+          <span className="sticky left-2 inline-block">{header}</span>
         </td>
       </tr>
       {cards.map((card) => {
         const row = result.grid[card.id] ?? {}
         const isSolution = row[ENVELOPE] === 'has'
-        // Carta "eliminada" (comum ou já fora de jogo): ninguém tem, nem o envelope.
+        // Carta "eliminada" (comum ou fora de jogo): ninguém tem, nem o envelope.
         const isEliminated = owners.every((o) => row[o.id] === 'not')
         return (
-          <tr key={card.id} className={isSolution ? 'bg-accent/10' : undefined}>
+          <tr key={card.id} className="border-t border-line">
             <td
-              className={`sticky left-0 z-10 truncate border-t border-line px-3 py-2.5 text-left text-sm ${NAME_COL} ${
+              className={`${STICKY} px-2 py-1.5 text-left ${
                 isSolution
-                  ? 'bg-app font-semibold text-accent'
-                  : isEliminated
-                    ? 'bg-app text-muted line-through decoration-muted/50'
-                    : 'bg-app text-ink'
+                  ? 'bg-accentC font-semibold text-onAccentC'
+                  : 'bg-app text-ink'
               }`}
-              title={card.name}
             >
-              {card.name}
+              <div
+                className={`w-[80px] truncate text-[13px] ${
+                  isEliminated && !isSolution
+                    ? 'text-muted line-through decoration-muted/50'
+                    : ''
+                }`}
+                title={card.name}
+              >
+                {card.name}
+              </div>
             </td>
             {owners.map((owner) => {
               const state = row[owner.id] ?? 'unknown'
@@ -136,20 +137,22 @@ function CategoryRows({
               return (
                 <td
                   key={owner.id}
-                  className={`border-l border-t border-line p-0 ${OWNER_COL}`}
+                  className={`min-w-[44px] border-l border-line p-0 ${
+                    owner.isMe ? 'bg-accent/[0.06]' : ''
+                  }`}
                 >
                   <button
                     onClick={() => onCellTap(card.id, owner.id)}
-                    className={`md-state relative flex h-11 w-full items-center justify-center text-base font-bold ${cellClasses(
-                      state,
-                    )}`}
+                    className="md-state relative flex h-9 w-full items-center justify-center"
                   >
                     {state === 'has' ? (
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20">
-                        {symbol(state)}
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20 text-sm font-bold text-emerald-300">
+                        ✓
                       </span>
                     ) : (
-                      symbol(state)
+                      <span className="text-sm font-bold text-muted/50">
+                        {symbol(state)}
+                      </span>
                     )}
                     {isManual && (
                       <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-accent" />

@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { resolveEdition } from '../domain/editions'
 import { MODE_MOTIF } from '../domain/theme'
 import { useGameStore } from '../state/gameStore'
-import { SolutionPanel } from './SolutionPanel'
+import { SolutionDrawer } from './SolutionDrawer'
 import { Grid } from './Grid'
 import { EventHistory } from './EventHistory'
 import { SuggestionModal } from './SuggestionModal'
 import { Icon, type IconName } from './md/Icon'
+import { Snackbar } from './md/Snackbar'
+import { tapLight, tapMedium } from '../lib/haptics'
 
 export function GameScreen() {
   const game = useGameStore((s) => s.game)!
@@ -20,13 +22,24 @@ export function GameScreen() {
   const [showModal, setShowModal] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
   const [tab, setTab] = useState<'grid' | 'history'>('grid')
+  const [snack, setSnack] = useState<string | null>(null)
 
   const edition = resolveEdition(game.editionId, game.cardNames)
+
+  const switchTab = (next: 'grid' | 'history') => {
+    tapLight()
+    setTab(next)
+  }
+
+  const handleCellTap = (cardId: string, ownerId: string) => {
+    tapLight()
+    cycleManualMark(cardId, ownerId)
+  }
 
   if (!result) return null
 
   return (
-    <div className="mx-auto flex h-full max-w-md flex-col">
+    <div className="relative mx-auto flex h-full max-w-md flex-col">
       {/* Top app bar (MD3) */}
       <header className="flex h-16 shrink-0 items-center gap-1 bg-app/90 px-1 pt-[env(safe-area-inset-top)] backdrop-blur">
         <IconButton icon="home" label="Início" onClick={goHome} />
@@ -56,72 +69,80 @@ export function GameScreen() {
         </div>
       </header>
 
-      {/* Área de conteúdo — a única que rola */}
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-8 pt-2">
-        {result.contradiction && (
-          <div className="flex items-start gap-2 rounded-2xl bg-error/15 px-4 py-3 text-sm text-error">
-            <Icon name="close" size={18} className="mt-0.5 shrink-0" />
-            <span>
-              Há informações contraditórias. Revise o histórico ou as marcações
-              manuais.
-            </span>
+      {/* Barra de solução compacta (abre o drawer com o detalhe) */}
+      <div className="shrink-0 px-4 pb-2">
+        <SolutionDrawer edition={edition} result={result} />
+      </div>
+
+      {result.contradiction && (
+        <div className="mx-4 mb-2 flex shrink-0 items-start gap-2 rounded-2xl bg-error/15 px-4 py-2.5 text-sm text-error">
+          <Icon name="close" size={18} className="mt-0.5 shrink-0" />
+          <span>Informações contraditórias. Revise o histórico ou as marcações.</span>
+        </div>
+      )}
+
+      {/* Área de conteúdo — preenche a tela e rola internamente */}
+      <div key={tab} className="animate-fade-in min-h-0 flex-1 px-4 pb-2">
+        {tab === 'grid' ? (
+          <Grid
+            edition={edition}
+            result={result}
+            players={game.players}
+            manualMarks={game.manualMarks}
+            onCellTap={handleCellTap}
+          />
+        ) : (
+          <div className="h-full overflow-y-auto">
+            <EventHistory
+              edition={edition}
+              players={game.players}
+              events={game.events}
+              onUndo={undoLastEvent}
+            />
           </div>
         )}
-
-        {/* O painel de solução fica sempre visível, independente da aba. */}
-        <SolutionPanel edition={edition} result={result} />
-
-        {tab === 'grid' ? (
-          <>
-            <Grid
-              edition={edition}
-              result={result}
-              players={game.players}
-              manualMarks={game.manualMarks}
-              onCellTap={cycleManualMark}
-            />
-            <p className="px-1 text-center text-[11px] leading-relaxed text-muted">
-              ✓ tem · ✕ não tem · vazio = indefinido. Toque numa célula para
-              marcar manualmente (• destacado).
-            </p>
-          </>
-        ) : (
-          <EventHistory
-            edition={edition}
-            players={game.players}
-            events={game.events}
-            onUndo={undoLastEvent}
-          />
-        )}
       </div>
 
-      {/* Extended FAB (MD3) — ação principal, sobreposto à navegação inferior */}
-      <div className="relative shrink-0">
-        <button
-          onClick={() => setShowModal(true)}
-          className="md-elev-3 md-state absolute -top-7 right-4 z-10 flex h-14 items-center gap-2 rounded-2xl bg-accentC px-5 font-semibold text-onAccentC"
-        >
-          <Icon name="add" size={24} />
-          Registrar palpite
-        </button>
+      {/* FAB flutuante (MD3) — sobre o grid, libera espaço da barra inferior */}
+      <button
+        onClick={() => {
+          tapLight()
+          setShowModal(true)
+        }}
+        aria-label="Registrar palpite"
+        className="md-elev-3 md-state absolute bottom-[calc(5.5rem_+_env(safe-area-inset-bottom))] right-4 z-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-accentC text-onAccentC"
+      >
+        <Icon name="add" size={28} />
+      </button>
 
-        {/* Bottom navigation bar (MD3) */}
-        <nav className="flex items-stretch gap-1 border-t border-line bg-app/90 px-2 pb-[env(safe-area-inset-bottom)] pt-2 backdrop-blur">
-          <NavItem
-            icon="grid"
-            label="Preenchimento"
-            active={tab === 'grid'}
-            onClick={() => setTab('grid')}
-          />
-          <NavItem
-            icon="history"
-            label="Histórico"
-            badge={game.events.length}
-            active={tab === 'history'}
-            onClick={() => setTab('history')}
-          />
-        </nav>
-      </div>
+      {/* Bottom navigation bar (MD3) */}
+      <nav className="flex shrink-0 items-stretch gap-1 border-t border-line bg-app/90 px-2 pb-[env(safe-area-inset-bottom)] pt-2 backdrop-blur">
+        <NavItem
+          icon="grid"
+          label="Preenchimento"
+          active={tab === 'grid'}
+          onClick={() => switchTab('grid')}
+        />
+        <NavItem
+          icon="history"
+          label="Histórico"
+          badge={game.events.length}
+          active={tab === 'history'}
+          onClick={() => switchTab('history')}
+        />
+      </nav>
+
+      {snack && (
+        <Snackbar
+          message={snack}
+          actionLabel="Desfazer"
+          onAction={() => {
+            tapLight()
+            undoLastEvent()
+          }}
+          onDismiss={() => setSnack(null)}
+        />
+      )}
 
       {showModal && (
         <SuggestionModal
@@ -131,6 +152,8 @@ export function GameScreen() {
           onSave={(suggesterId, cards, responses) => {
             addSuggestion(suggesterId, cards, responses)
             setShowModal(false)
+            tapMedium()
+            setSnack('Palpite registrado')
           }}
         />
       )}
