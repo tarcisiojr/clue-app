@@ -21,8 +21,13 @@ export default function App() {
 
   const showHome = phase === 'home' || !hasGame
 
+  // App shell: ocupa a altura exata da tela (100dvh) e não deixa o body rolar —
+  // só a área de conteúdo de cada tela rola, como num app nativo.
   return (
-    <div data-theme={theme} className="app-bg min-h-full">
+    <div
+      data-theme={theme}
+      className="app-bg h-[100dvh] overflow-hidden"
+    >
       {showHome && <Home />}
       {!showHome && phase === 'setup' && <Setup />}
       {!showHome && phase === 'game' && <GameScreen />}

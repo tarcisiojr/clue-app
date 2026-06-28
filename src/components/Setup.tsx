@@ -37,8 +37,9 @@ export function Setup() {
   const commonMismatch = commonCards.length !== commonTarget
 
   return (
-    <div className="mx-auto flex min-h-full max-w-md flex-col gap-6 px-4 pb-6 pt-[calc(1.5rem_+_env(safe-area-inset-top))]">
-      <header className="flex items-center justify-between">
+    <div className="mx-auto flex h-full max-w-md flex-col">
+      {/* Cabeçalho (app bar) */}
+      <header className="flex shrink-0 items-center justify-between border-b border-line bg-app/95 px-4 pb-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))] backdrop-blur">
         <button onClick={abandonGame} className="text-sm text-sub">
           ← Sair
         </button>
@@ -48,6 +49,8 @@ export function Setup() {
         <span className="w-10" />
       </header>
 
+      {/* Área rolável com a configuração */}
+      <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-4 pb-4 pt-5">
       {/* Jogadores */}
       <section className="flex flex-col gap-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
@@ -227,13 +230,17 @@ export function Setup() {
           </div>
         )}
       </section>
+      </div>
 
-      <button
-        onClick={startGame}
-        className="sticky bottom-[calc(1rem_+_env(safe-area-inset-bottom))] mt-2 rounded-xl bg-emerald-500 px-4 py-4 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
-      >
-        Começar partida
-      </button>
+      {/* Barra inferior fixa do shell */}
+      <div className="shrink-0 border-t border-line bg-app/95 px-4 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] pt-2 backdrop-blur">
+        <button
+          onClick={startGame}
+          className="w-full rounded-xl bg-emerald-500 px-4 py-3.5 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
+        >
+          Começar partida
+        </button>
+      </div>
     </div>
   )
 }

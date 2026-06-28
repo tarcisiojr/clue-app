@@ -52,6 +52,9 @@ body {
   color: rgb(var(--c-ink));
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  /* App shell: o body não rola; apenas a área de conteúdo de cada tela rola. */
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 /* Fundo temático aplicado no contêiner raiz do app */

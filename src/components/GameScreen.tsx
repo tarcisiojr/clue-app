@@ -25,9 +25,9 @@ export function GameScreen() {
   if (!result) return null
 
   return (
-    <div className="mx-auto flex min-h-full max-w-md flex-col">
-      {/* Cabeçalho */}
-      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-app/95 px-4 pb-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))] backdrop-blur">
+    <div className="mx-auto flex h-full max-w-md flex-col">
+      {/* Cabeçalho (app bar) — fixo no topo do shell */}
+      <header className="flex shrink-0 items-center justify-between border-b border-line bg-app/95 px-4 pb-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))] backdrop-blur">
         <button onClick={goHome} className="text-sm text-sub">
           ≡ Início
         </button>
@@ -58,7 +58,8 @@ export function GameScreen() {
         </div>
       </header>
 
-      <div className="flex flex-col gap-4 px-4 pt-4 pb-[calc(9.5rem_+_env(safe-area-inset-bottom))]">
+      {/* Área de conteúdo — a única que rola */}
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4 pt-4">
         {result.contradiction && (
           <div className="rounded-lg border border-rose-500 bg-rose-500/15 px-3 py-2 text-sm text-rose-200">
             ⚠ Há informações contraditórias. Revise o histórico ou as marcações
@@ -93,8 +94,8 @@ export function GameScreen() {
         )}
       </div>
 
-      {/* Barra inferior fixa: ação de registrar + abas de navegação */}
-      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto flex max-w-md flex-col gap-2 border-t border-line bg-app/95 px-4 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] pt-2 backdrop-blur">
+      {/* Barra inferior (app bar) — parte fixa do shell */}
+      <div className="flex shrink-0 flex-col gap-2 border-t border-line bg-app/95 px-4 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] pt-2 backdrop-blur">
         <button
           onClick={() => setShowModal(true)}
           className="w-full rounded-xl bg-accent px-4 py-3.5 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"

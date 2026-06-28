@@ -16,7 +16,8 @@ export function Home() {
   const hasSaved = savedGame !== null
 
   return (
-    <div className="mx-auto flex min-h-full max-w-md flex-col gap-6 px-5 pb-8 pt-[calc(2rem_+_env(safe-area-inset-top))]">
+    <div className="mx-auto flex h-full max-w-md flex-col">
+      <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 pb-4 pt-[calc(2rem_+_env(safe-area-inset-top))]">
       <header className="text-center">
         <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface shadow-lg">
           <svg viewBox="0 0 64 64" className="h-10 w-10">
@@ -97,19 +98,22 @@ export function Home() {
           Inclui você. A dedução fica mais forte com 3 ou mais jogadores.
         </p>
       </section>
+      </div>
 
-      <button
-        onClick={() => newGame(editionId, playerCount)}
-        className="mt-2 rounded-xl bg-emerald-500 px-4 py-4 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
-      >
-        Nova partida
-      </button>
-
-      {hasSaved && (
-        <p className="text-center text-xs text-accent/80">
-          Iniciar uma nova partida substitui a atual.
-        </p>
-      )}
+      {/* Barra inferior fixa do shell */}
+      <div className="shrink-0 border-t border-line bg-app/95 px-5 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] pt-2 backdrop-blur">
+        <button
+          onClick={() => newGame(editionId, playerCount)}
+          className="w-full rounded-xl bg-emerald-500 px-4 py-3.5 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
+        >
+          Nova partida
+        </button>
+        {hasSaved && (
+          <p className="mt-1.5 text-center text-xs text-accent/80">
+            Iniciar uma nova partida substitui a atual.
+          </p>
+        )}
+      </div>
     </div>
   )
 }
