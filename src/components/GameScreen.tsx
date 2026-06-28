@@ -125,8 +125,9 @@ export function GameScreen() {
         <Icon name="add" size={28} />
       </button>
 
-      {/* Bottom navigation bar (MD3) */}
-      <nav className="flex shrink-0 items-stretch gap-1 border-t border-line bg-app/90 px-2 pb-[env(safe-area-inset-bottom)] pt-2 backdrop-blur">
+      {/* Bottom navigation bar (MD3). Fundo sólido = mesma cor do body, p/ a faixa
+          do home indicator (safe area) ficar contínua, sem "espaço" aparente. */}
+      <nav className="flex shrink-0 items-stretch gap-1 border-t border-line bg-app px-2 pb-[env(safe-area-inset-bottom)] pt-2">
         <NavItem
           icon="grid"
           label="Preenchimento"

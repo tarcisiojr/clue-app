@@ -13,22 +13,25 @@ export default function App() {
   // Na Home (sem partida) usa o tema padrão (Mansão); nas demais telas, o do modo.
   const theme = phase === 'home' || !hasGame ? 'mansao' : themeFor(editionId)
 
-  // Mantém a cor da barra de status do navegador/PWA em sintonia com o tema.
+  // Sincroniza a cor do tema com: (1) a barra de status; (2) o fundo de html/body.
+  // Pintar html/body com a cor do tema garante que qualquer faixa de safe area
+  // (zona do home indicator no PWA) fique invisível — mesma cor da barra inferior.
   useEffect(() => {
+    const color = MODE_THEME_COLOR[theme] ?? '#17120d'
     const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) meta.setAttribute('content', MODE_THEME_COLOR[theme] ?? '#17120d')
+    if (meta) meta.setAttribute('content', color)
+    document.documentElement.style.backgroundColor = color
+    document.body.style.backgroundColor = color
   }, [theme])
 
   const showHome = phase === 'home' || !hasGame
 
-  // App shell: cadeia height:100% (html → body → #root → app) preenche o viewport
-  // do PWA standalone INCLUINDO as safe areas — assim a barra inferior cobre a
-  // zona do home indicator (em vez de sobrar o fundo). O body não rola; só a
-  // área de conteúdo de cada tela rola, como num app nativo.
+  // App shell: preenche o viewport do PWA (100dvh + cadeia height:100%) e o body
+  // não rola; só a área de conteúdo de cada tela rola, como num app nativo.
   return (
     <div
       data-theme={theme}
-      className="app-bg h-full overflow-hidden"
+      className="app-bg h-[100dvh] overflow-hidden"
     >
       {showHome && <Home />}
       {!showHome && phase === 'setup' && <Setup />}
