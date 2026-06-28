@@ -31,6 +31,14 @@ export interface Player {
 export const ENVELOPE = 'envelope' as const
 
 /**
+ * Identificador da pilha de cartas "comuns" — as que sobram na distribuição e
+ * ficam viradas para cima, visíveis a todos. Não pertencem a nenhum jogador
+ * nem ao envelope, mas o motor as trata como um dono especial para manter a
+ * regra de unicidade (toda carta tem exatamente um dono).
+ */
+export const COMMON = 'common' as const
+
+/**
  * Dono de uma carta: o id de um jogador ou o envelope.
  * Cada carta pertence a exatamente um dono.
  */
@@ -76,6 +84,8 @@ export interface GameState {
   players: Player[]
   /** Cartas que estão na SUA mão (fato inicial da partida). */
   myHand: string[]
+  /** Cartas viradas/comuns, visíveis a todos (fora das mãos e do envelope). */
+  commonCards: string[]
   events: SuggestionEvent[]
   /** Marcações manuais: chave `${cardId}:${ownerId}` -> 'has' | 'not'. */
   manualMarks: Record<string, ManualMark>

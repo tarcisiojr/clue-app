@@ -5,6 +5,7 @@ import {
   getEdition,
   resolveEdition,
 } from '../domain/editions'
+import { CATEGORY_ICON } from '../domain/theme'
 import { useGameStore } from '../state/gameStore'
 
 export function Setup() {
@@ -13,6 +14,7 @@ export function Setup() {
   const setHandSize = useGameStore((s) => s.setHandSize)
   const setMe = useGameStore((s) => s.setMe)
   const toggleMyHandCard = useGameStore((s) => s.toggleMyHandCard)
+  const toggleCommonCard = useGameStore((s) => s.toggleCommonCard)
   const renameCard = useGameStore((s) => s.renameCard)
   const startGame = useGameStore((s) => s.startGame)
   const abandonGame = useGameStore((s) => s.abandonGame)
@@ -26,6 +28,13 @@ export function Setup() {
   const handSelected = game.myHand.length
   const handTarget = me?.handSize ?? 0
   const handMismatch = handSelected !== handTarget
+
+  // Cartas viradas (comuns): o que sobra após o envelope (3) e as mãos definidas.
+  // Derivar das mãos mantém tudo consistente mesmo se o usuário ajustar os tamanhos.
+  const commonCards = game.commonCards ?? []
+  const totalHands = game.players.reduce((sum, p) => sum + p.handSize, 0)
+  const commonTarget = Math.max(0, baseEdition.cards.length - 3 - totalHands)
+  const commonMismatch = commonCards.length !== commonTarget
 
   return (
     <div className="mx-auto flex min-h-full max-w-md flex-col gap-6 px-4 pb-6 pt-[calc(1.5rem_+_env(safe-area-inset-top))]">
@@ -133,6 +142,55 @@ export function Setup() {
           </div>
         ))}
       </section>
+
+      {/* Cartas viradas (comuns) — só quando sobram cartas na distribuição */}
+      {commonTarget > 0 && (
+        <section className="flex flex-col gap-3">
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
+              Cartas viradas
+            </h2>
+            <span
+              className={`text-xs font-semibold ${
+                commonMismatch ? 'text-accent' : 'text-emerald-400'
+              }`}
+            >
+              {commonCards.length} / {commonTarget}
+            </span>
+          </div>
+          <p className="-mt-1 text-xs text-muted">
+            Sobram {commonTarget} carta(s) na mesa, viradas para todos verem.
+            Marque-as para o app eliminá-las da dedução.
+          </p>
+          {CATEGORY_ORDER.map((category) => (
+            <div key={category}>
+              <div className="mb-1 text-[11px] font-semibold uppercase text-muted">
+                {CATEGORY_ICON[category]} {CATEGORY_LABELS[category]}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {edition.cards
+                  .filter((c) => c.category === category)
+                  .map((card) => {
+                    const selected = commonCards.includes(card.id)
+                    return (
+                      <button
+                        key={card.id}
+                        onClick={() => toggleCommonCard(card.id)}
+                        className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                          selected
+                            ? 'border-accent bg-accent/20 text-accent'
+                            : 'border-line bg-surface/40 text-sub'
+                        }`}
+                      >
+                        {card.name}
+                      </button>
+                    )
+                  })}
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
 
       {/* Editor de nomes (locais do Praia, etc.) */}
       <section className="flex flex-col gap-2">

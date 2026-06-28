@@ -6,6 +6,7 @@
 // raramente são feitas no cartão de papel. Isso maximiza a precisão da marcação.
 
 import {
+  COMMON,
   ENVELOPE,
   type Card,
   type Category,
@@ -21,6 +22,8 @@ export interface InferenceInput {
   players: Player[]
   /** Cartas que estão na sua mão (fato inicial). */
   myHand: string[]
+  /** Cartas viradas/comuns, visíveis a todos (fora das mãos e do envelope). */
+  commonCards?: string[]
   events: SuggestionEvent[]
   manualMarks: Record<string, ManualMark>
 }
@@ -44,9 +47,10 @@ type Fact = 'has' | 'not'
 
 /**
  * Limite de células (cartas × donos) para habilitar a busca aninhada (nest=1).
- * Um jogo padrão de 6 jogadores tem 21×7 = 147 células, bem abaixo do limite.
+ * Um jogo padrão de 6 jogadores tem 21×8 = 168 células (inclui envelope e a
+ * pilha comum), ainda barato. O limite protege apenas edições custom enormes.
  */
-const MAX_CELLS_FOR_DEEP_SEARCH = 160
+const MAX_CELLS_FOR_DEEP_SEARCH = 200
 
 interface Disjunction {
   owner: string
@@ -151,16 +155,18 @@ class Solver {
 
   // R3 — Envelope/categoria: 1 carta por categoria no envelope.
   private ruleEnvelope(): void {
-    // Uma carta é do envelope se, e somente se, nenhum jogador a possui.
+    // Uma carta é do envelope se nenhum jogador a possui E ela não é comum.
     for (const card of this.cards) {
       if (this.get(card.id, ENVELOPE) === undefined) {
         const allPlayersNot = this.players.every(
           (p) => this.get(card.id, p.id) === 'not',
         )
-        if (allPlayersNot) this.set(card.id, ENVELOPE, 'has')
+        const notCommon = this.get(card.id, COMMON) === 'not'
+        if (allPlayersNot && notCommon) this.set(card.id, ENVELOPE, 'has')
       }
       if (this.get(card.id, ENVELOPE) === 'has') {
         for (const p of this.players) this.set(card.id, p.id, 'not')
+        this.set(card.id, COMMON, 'not')
       }
     }
     // Exatamente uma carta por categoria no envelope.
@@ -275,23 +281,35 @@ class Solver {
  */
 export function infer(input: InferenceInput): InferenceResult {
   const { edition, players, myHand, events, manualMarks } = input
+  const commonCards = input.commonCards ?? []
   const cards = edition.cards
-  const owners = [...players.map((p) => p.id), ENVELOPE]
+  // Donos exibidos na grade (jogadores + envelope) e donos internos do solver,
+  // que incluem a pilha comum para manter a regra de unicidade.
+  const displayOwners = [...players.map((p) => p.id), ENVELOPE]
+  const solverOwners = [...displayOwners, COMMON]
   const categories = uniqueCategories(cards)
 
   const disjunctions: Disjunction[] = []
-  const solver = new Solver(cards, owners, players, disjunctions, categories)
+  const solver = new Solver(cards, solverOwners, players, disjunctions, categories)
 
   let contradiction = false
 
   // Profundidade da busca por contradição: usa raciocínio aninhado (nest=1) para
   // jogos de tamanho usual; cai para nest=0 em edições muito grandes (custom) para
   // manter a resposta rápida.
-  const cellCount = cards.length * owners.length
+  const cellCount = cards.length * solverOwners.length
   const nest = cellCount <= MAX_CELLS_FOR_DEEP_SEARCH ? 1 : 0
 
   try {
-    applyInitialFacts(solver, { cards, players, myHand, events, manualMarks, disjunctions })
+    applyInitialFacts(solver, {
+      cards,
+      players,
+      myHand,
+      commonCards,
+      events,
+      manualMarks,
+      disjunctions,
+    })
     solver.propagate()
     solver.search(nest)
   } catch (err) {
@@ -300,7 +318,7 @@ export function infer(input: InferenceInput): InferenceResult {
   }
 
   return {
-    grid: buildGrid(solver, cards, owners),
+    grid: buildGrid(solver, cards, displayOwners),
     solution: buildSolution(solver, cards, categories),
     contradiction,
   }
@@ -324,14 +342,28 @@ function applyInitialFacts(
     cards: Card[]
     players: Player[]
     myHand: string[]
+    commonCards: string[]
     events: SuggestionEvent[]
     manualMarks: Record<string, ManualMark>
     disjunctions: Disjunction[]
   },
 ): void {
-  const { cards, players, myHand, events, manualMarks, disjunctions } = ctx
+  const { cards, players, myHand, commonCards, events, manualMarks, disjunctions } = ctx
   const me = players.find((p) => p.isMe)
   const handSet = new Set(myHand)
+  const commonSet = new Set(commonCards)
+
+  // Cartas comuns (viradas): pertencem à pilha comum e a mais ninguém.
+  for (const card of cards) {
+    if (commonSet.has(card.id)) {
+      solver.set(card.id, COMMON, 'has')
+      for (const p of players) solver.set(card.id, p.id, 'not')
+      solver.set(card.id, ENVELOPE, 'not')
+    } else {
+      // Nenhuma outra carta pertence à pilha comum (ela é totalmente conhecida).
+      solver.set(card.id, COMMON, 'not')
+    }
+  }
 
   // Sua mão: você possui essas cartas e nenhuma outra (você conhece sua mão).
   if (me) {

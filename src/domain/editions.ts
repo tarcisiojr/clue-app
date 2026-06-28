@@ -126,12 +126,12 @@ export const CATEGORY_ORDER: Category[] = ['suspect', 'weapon', 'room']
 
 /**
  * Distribui as cartas (exceto as 3 da solução) entre N jogadores e devolve
- * o tamanho de mão de cada um. As primeiras mãos recebem a carta extra quando
- * a divisão não é exata.
+ * o tamanho de mão de cada um. Todas as mãos têm o mesmo tamanho; as cartas
+ * que sobram quando a divisão não é exata ficam viradas para cima (comuns),
+ * como nas regras do jogo. Veja [leftoverCount].
  */
 export function dealHandSizes(totalCards: number, playerCount: number): number[] {
   const distributable = totalCards - 3 // 3 cartas vão para o envelope
   const base = Math.floor(distributable / playerCount)
-  const extra = distributable % playerCount
-  return Array.from({ length: playerCount }, (_, i) => base + (i < extra ? 1 : 0))
+  return Array.from({ length: playerCount }, () => base)
 }

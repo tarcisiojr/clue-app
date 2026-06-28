@@ -30,6 +30,7 @@ interface StoreState {
   setHandSize: (index: number, handSize: number) => void
   setMe: (index: number) => void
   toggleMyHandCard: (cardId: string) => void
+  toggleCommonCard: (cardId: string) => void
   renameCard: (cardId: string, name: string) => void
 
   // Durante a partida
@@ -58,12 +59,17 @@ function recompute(game: GameState | null): InferenceResult | null {
     edition,
     players: game.players,
     myHand: game.myHand,
+    commonCards: game.commonCards ?? [],
     events: game.events,
     manualMarks: game.manualMarks,
   })
 }
 
-/** Aplica uma alteração no estado da partida e recalcula a inferência. */
+/**
+ * Aplica uma alteração no estado da partida. A inferência (cara) só é recalculada
+ * quando a partida está em andamento; durante a configuração ela é adiada para o
+ * início do jogo, evitando recomputar a cada tecla digitada.
+ */
 function withGame(
   state: StoreState,
   update: (game: GameState) => GameState,
@@ -71,7 +77,8 @@ function withGame(
   if (!state.game) return {}
   const now = Date.now()
   const game = { ...update(state.game), updatedAt: now }
-  return { game, result: recompute(game) }
+  const result = state.phase === 'game' ? recompute(game) : state.result
+  return { game, result }
 }
 
 export const useGameStore = create<StoreState>()(
@@ -96,6 +103,7 @@ export const useGameStore = create<StoreState>()(
           cardNames: {},
           players,
           myHand: [],
+          commonCards: [],
           events: [],
           manualMarks: {},
           createdAt: now,
@@ -104,7 +112,8 @@ export const useGameStore = create<StoreState>()(
         set({ phase: 'setup', game, result: recompute(game) })
       },
 
-      startGame: () => set({ phase: 'game' }),
+      // Ao iniciar o jogo, recalcula a inferência (adiada durante a configuração).
+      startGame: () => set((s) => ({ phase: 'game', result: recompute(s.game) })),
       goToSetup: () => set({ phase: 'setup' }),
       goHome: () => set({ phase: 'home' }),
       abandonGame: () => set({ phase: 'home', game: null, result: null }),
@@ -143,7 +152,23 @@ export const useGameStore = create<StoreState>()(
             const myHand = has
               ? g.myHand.filter((id) => id !== cardId)
               : [...g.myHand, cardId]
-            return { ...g, myHand }
+            // Uma carta na sua mão não pode estar também na pilha comum.
+            const commonCards = (g.commonCards ?? []).filter((id) => id !== cardId)
+            return { ...g, myHand, commonCards }
+          }),
+        ),
+
+      toggleCommonCard: (cardId) =>
+        set((s) =>
+          withGame(s, (g) => {
+            const current = g.commonCards ?? []
+            const has = current.includes(cardId)
+            const commonCards = has
+              ? current.filter((id) => id !== cardId)
+              : [...current, cardId]
+            // Uma carta virada (comum) não pode estar também na sua mão.
+            const myHand = g.myHand.filter((id) => id !== cardId)
+            return { ...g, commonCards, myHand }
           }),
         ),
 

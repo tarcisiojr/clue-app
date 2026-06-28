@@ -18,6 +18,7 @@ export function GameScreen() {
 
   const [showModal, setShowModal] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
+  const [tab, setTab] = useState<'grid' | 'history'>('grid')
 
   const edition = resolveEdition(game.editionId, game.cardNames)
 
@@ -57,7 +58,7 @@ export function GameScreen() {
         </div>
       </header>
 
-      <div className="flex flex-col gap-4 px-4 pt-4 pb-[calc(7rem_+_env(safe-area-inset-bottom))]">
+      <div className="flex flex-col gap-4 px-4 pt-4 pb-[calc(9.5rem_+_env(safe-area-inset-bottom))]">
         {result.contradiction && (
           <div className="rounded-lg border border-rose-500 bg-rose-500/15 px-3 py-2 text-sm text-rose-200">
             ⚠ Há informações contraditórias. Revise o histórico ou as marcações
@@ -65,37 +66,59 @@ export function GameScreen() {
           </div>
         )}
 
+        {/* O painel de solução fica sempre visível, independente da aba. */}
         <SolutionPanel edition={edition} result={result} />
 
-        <Grid
-          edition={edition}
-          result={result}
-          players={game.players}
-          manualMarks={game.manualMarks}
-          onCellTap={cycleManualMark}
-        />
-
-        <p className="text-center text-[11px] text-muted">
-          ✓ tem · ✕ não tem · vazio = indefinido. Toque numa célula para marcar
-          manualmente (• azul).
-        </p>
-
-        <EventHistory
-          edition={edition}
-          players={game.players}
-          events={game.events}
-          onUndo={undoLastEvent}
-        />
+        {tab === 'grid' ? (
+          <>
+            <Grid
+              edition={edition}
+              result={result}
+              players={game.players}
+              manualMarks={game.manualMarks}
+              onCellTap={cycleManualMark}
+            />
+            <p className="text-center text-[11px] text-muted">
+              ✓ tem · ✕ não tem · vazio = indefinido. Toque numa célula para
+              marcar manualmente (• azul).
+            </p>
+          </>
+        ) : (
+          <EventHistory
+            edition={edition}
+            players={game.players}
+            events={game.events}
+            onUndo={undoLastEvent}
+          />
+        )}
       </div>
 
-      {/* Botão de ação fixo */}
-      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-md px-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] pt-2">
+      {/* Barra inferior fixa: ação de registrar + abas de navegação */}
+      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto flex max-w-md flex-col gap-2 border-t border-line bg-app/95 px-4 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] pt-2 backdrop-blur">
         <button
           onClick={() => setShowModal(true)}
-          className="w-full rounded-xl bg-accent px-4 py-4 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
+          className="w-full rounded-xl bg-accent px-4 py-3.5 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
         >
           + Registrar palpite
         </button>
+        <div className="grid grid-cols-2 gap-1 rounded-xl bg-surface/70 p-1">
+          <button
+            onClick={() => setTab('grid')}
+            className={`rounded-lg py-2 text-sm font-semibold transition ${
+              tab === 'grid' ? 'bg-surface2 text-ink' : 'text-sub'
+            }`}
+          >
+            📋 Preenchimento
+          </button>
+          <button
+            onClick={() => setTab('history')}
+            className={`rounded-lg py-2 text-sm font-semibold transition ${
+              tab === 'history' ? 'bg-surface2 text-ink' : 'text-sub'
+            }`}
+          >
+            🕑 Histórico{game.events.length > 0 ? ` (${game.events.length})` : ''}
+          </button>
+        </div>
       </div>
 
       {showModal && (

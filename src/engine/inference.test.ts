@@ -240,3 +240,65 @@ describe('detecção de contradição', () => {
     expect(result.contradiction).toBe(true)
   })
 })
+
+// --- Cartas viradas (comuns) -------------------------------------------------
+
+describe('cartas viradas (comuns)', () => {
+  it('elimina as cartas comuns de todos os jogadores e do envelope', () => {
+    const result = infer(
+      baseInput({
+        players: [player('me', 2, true), player('A', 2)],
+        commonCards: ['S2'],
+      }),
+    )
+    expect(result.grid.S2.me).toBe('not')
+    expect(result.grid.S2.A).toBe('not')
+    expect(result.grid.S2[ENVELOPE]).toBe('not')
+  })
+
+  it('combina com palpites para apontar a solução da categoria', () => {
+    const result = infer(
+      baseInput({
+        players: [player('me', 1, true), player('A', 4)],
+        myHand: ['S1'],
+        commonCards: ['S2'],
+        events: [
+          {
+            id: 'e1',
+            type: 'suggestion',
+            suggesterId: 'me',
+            cards: ['S3', 'W2', 'R2'],
+            responses: [{ playerId: 'A', result: 'pass' }],
+          },
+        ],
+      }),
+    )
+    // S1 é sua, S2 é comum, e A não tem S3 -> S3 está no envelope.
+    expect(result.solution.suspect.cardId).toBe('S3')
+  })
+})
+
+// --- Blefe / dedução com cartas já conhecidas --------------------------------
+
+describe('blefe e cartas já conhecidas', () => {
+  it('deduz a carta mostrada mesmo quando o sugeridor usa carta que você tem', () => {
+    const result = infer(
+      baseInput({
+        players: [player('me', 2, true), player('A', 2), player('B', 2)],
+        myHand: ['S1', 'R1'],
+        events: [
+          {
+            id: 'e1',
+            type: 'suggestion',
+            suggesterId: 'A',
+            // A blefa usando S1 e R1, que na verdade são SUAS.
+            cards: ['S1', 'W1', 'R1'],
+            responses: [{ playerId: 'B', result: 'showed' }],
+          },
+        ],
+      }),
+    )
+    // Como S1 e R1 são suas, B só pode ter mostrado W1.
+    expect(result.grid.W1.B).toBe('has')
+  })
+})
