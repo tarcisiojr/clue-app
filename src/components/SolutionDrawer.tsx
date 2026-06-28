@@ -4,6 +4,7 @@ import { CATEGORY_ICON } from '../domain/theme'
 import type { Edition } from '../domain/types'
 import type { InferenceResult } from '../engine/inference'
 import { Icon } from './md/Icon'
+import { BottomSheet } from './md/BottomSheet'
 
 interface Props {
   edition: Edition
@@ -71,67 +72,46 @@ export function SolutionDrawer({ edition, result }: Props) {
 
       {/* Drawer (bottom sheet) com o detalhe */}
       {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60"
-          onClick={() => setOpen(false)}
+        <BottomSheet
+          title={allSolved ? '🎉 Crime resolvido!' : 'Solução'}
+          onClose={() => setOpen(false)}
         >
-          <div
-            className="w-full max-w-md rounded-t-3xl bg-app pb-[calc(1.5rem_+_env(safe-area-inset-bottom))]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-center pb-1 pt-2">
-              <span className="h-1 w-9 rounded-full bg-outline/50" />
-            </div>
-            <div className="flex items-center justify-between px-4 pb-3">
-              <h2 className="font-display text-lg text-ink">
-                {allSolved ? '🎉 Crime resolvido!' : 'Solução'}
-              </h2>
-              <button
-                onClick={() => setOpen(false)}
-                aria-label="Fechar"
-                className="md-state flex h-10 w-10 items-center justify-center rounded-full text-sub"
-              >
-                <Icon name="close" size={22} />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 px-4">
-              {CATEGORY_ORDER.map((category) => {
-                const sol = result.solution[category]
-                const solved = sol.cardId !== null
-                return (
-                  <div
-                    key={category}
-                    className={`flex flex-col items-center rounded-2xl px-2 py-3 text-center ${
-                      solved ? 'bg-accent/25' : 'bg-surface'
-                    }`}
-                  >
-                    <div className="text-2xl leading-none">
-                      {CATEGORY_ICON[category]}
-                    </div>
-                    <div className="mt-1.5 text-[10px] font-bold uppercase tracking-wider text-muted">
-                      {CATEGORY_HEADERS[category]}
-                    </div>
-                    {solved ? (
-                      <div className="font-display mt-1 text-sm text-accent">
-                        {nameOf(sol.cardId!)}
-                      </div>
-                    ) : (
-                      <div className="mt-1 text-xs text-sub">
-                        {sol.candidates.length} possíveis
-                      </div>
-                    )}
+          <div className="grid grid-cols-3 gap-2">
+            {CATEGORY_ORDER.map((category) => {
+              const sol = result.solution[category]
+              const solved = sol.cardId !== null
+              return (
+                <div
+                  key={category}
+                  className={`flex flex-col items-center rounded-2xl px-2 py-3 text-center ${
+                    solved ? 'bg-accent/25' : 'bg-surface'
+                  }`}
+                >
+                  <div className="text-2xl leading-none">
+                    {CATEGORY_ICON[category]}
                   </div>
-                )
-              })}
-            </div>
-
-            <p className="px-4 pt-4 text-center text-[11px] leading-relaxed text-muted">
-              ✓ tem · ✕ não tem · vazio = indefinido. Toque numa célula da grade
-              para marcar manualmente (• destacado).
-            </p>
+                  <div className="mt-1.5 text-[10px] font-bold uppercase tracking-wider text-muted">
+                    {CATEGORY_HEADERS[category]}
+                  </div>
+                  {solved ? (
+                    <div className="font-display mt-1 text-sm text-accent">
+                      {nameOf(sol.cardId!)}
+                    </div>
+                  ) : (
+                    <div className="mt-1 text-xs text-sub">
+                      {sol.candidates.length} possíveis
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
-        </div>
+
+          <p className="pt-4 text-center text-[11px] leading-relaxed text-muted">
+            ✓ tem · ✕ não tem · vazio = indefinido. Toque numa célula da grade
+            para marcar manualmente (• destacado).
+          </p>
+        </BottomSheet>
       )}
     </>
   )

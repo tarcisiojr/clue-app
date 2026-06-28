@@ -150,7 +150,7 @@ function CategoryRows({
                         ✓
                       </span>
                     ) : (
-                      <span className="text-sm font-bold text-muted/50">
+                      <span className="text-sm font-bold text-muted">
                         {symbol(state)}
                       </span>
                     )}

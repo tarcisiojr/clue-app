@@ -6,8 +6,8 @@ import type {
   Player,
   SuggestionResponse,
 } from '../domain/types'
-import { Icon } from './md/Icon'
 import { Chip } from './md/Chip'
+import { BottomSheet } from './md/BottomSheet'
 
 type RespKind = 'none' | 'pass' | 'showed'
 interface RespState {
@@ -64,32 +64,22 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60">
-      <div className="flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-3xl bg-app">
-        {/* Alça de bottom sheet (MD3) */}
-        <div className="flex justify-center pb-1 pt-2">
-          <span className="h-1 w-9 rounded-full bg-outline/50" />
-        </div>
-        <header className="flex items-center justify-between px-2 pb-2">
-          <button
-            onClick={onClose}
-            aria-label="Cancelar"
-            className="md-state flex h-12 w-12 items-center justify-center rounded-full text-sub"
-          >
-            <Icon name="close" size={22} />
-          </button>
-          <h2 className="font-display text-lg font-bold text-ink">
-            Registrar palpite
-          </h2>
-          <button
-            onClick={handleSave}
-            className="md-state rounded-full bg-accent px-4 py-2 text-sm font-bold text-onAccent"
-          >
-            Salvar
-          </button>
-        </header>
-
-        <div className="flex flex-col gap-5 overflow-y-auto px-4 pt-2 pb-[calc(1rem_+_env(safe-area-inset-bottom))]">
+    <BottomSheet
+      title="Registrar palpite"
+      onClose={onClose}
+      headerAction={(close) => (
+        <button
+          onClick={() => {
+            handleSave()
+            close()
+          }}
+          className="md-state rounded-full bg-accent px-4 py-2 text-sm font-bold text-onAccent transition active:scale-95"
+        >
+          Salvar
+        </button>
+      )}
+    >
+        <div className="flex flex-col gap-5">
           {/* Quem fez o palpite */}
           <div>
             <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted">
@@ -209,7 +199,6 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
               })}
           </div>
         </div>
-      </div>
-    </div>
+    </BottomSheet>
   )
 }

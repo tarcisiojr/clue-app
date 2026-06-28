@@ -54,17 +54,24 @@ export function GameScreen() {
             onClick={() => setShowMenu((v) => !v)}
           />
           {showMenu && (
-            <div className="md-elev-2 absolute right-1 top-12 z-30 w-52 overflow-hidden rounded-xl border border-line bg-surface2 py-1">
-              <button
-                onClick={() => {
-                  setShowMenu(false)
-                  goToSetup()
-                }}
-                className="md-state block w-full px-4 py-3 text-left text-sm text-ink"
-              >
-                Reconfigurar partida
-              </button>
-            </div>
+            <>
+              {/* Backdrop invisível: toque fora fecha o menu */}
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowMenu(false)}
+              />
+              <div className="md-elev-3 animate-fade-in absolute right-1 top-12 z-50 w-56 origin-top-right overflow-hidden rounded-2xl bg-surface3 py-1">
+                <button
+                  onClick={() => {
+                    setShowMenu(false)
+                    goToSetup()
+                  }}
+                  className="md-state block w-full px-4 py-3 text-left text-sm text-ink"
+                >
+                  Reconfigurar partida
+                </button>
+              </div>
+            </>
           )}
         </div>
       </header>
@@ -150,8 +157,8 @@ export function GameScreen() {
           players={game.players}
           onClose={() => setShowModal(false)}
           onSave={(suggesterId, cards, responses) => {
+            // O fechamento animado fica a cargo do BottomSheet (close()).
             addSuggestion(suggesterId, cards, responses)
-            setShowModal(false)
             tapMedium()
             setSnack('Palpite registrado')
           }}
