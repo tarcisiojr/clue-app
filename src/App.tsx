@@ -21,12 +21,13 @@ export default function App() {
 
   const showHome = phase === 'home' || !hasGame
 
-  // App shell: ocupa a altura exata da tela (100dvh) e não deixa o body rolar —
-  // só a área de conteúdo de cada tela rola, como num app nativo.
+  // App shell: `fixed inset-0` preenche exatamente o viewport (mais confiável
+  // que 100dvh, que no iOS às vezes reporta menos que a tela e deixa sobra).
+  // O body não rola; só a área de conteúdo de cada tela rola, como num app.
   return (
     <div
       data-theme={theme}
-      className="app-bg h-[100dvh] overflow-hidden"
+      className="app-bg fixed inset-0 overflow-hidden"
     >
       {showHome && <Home />}
       {!showHome && phase === 'setup' && <Setup />}
