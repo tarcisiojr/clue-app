@@ -6,6 +6,7 @@ import { SolutionPanel } from './SolutionPanel'
 import { Grid } from './Grid'
 import { EventHistory } from './EventHistory'
 import { SuggestionModal } from './SuggestionModal'
+import { Icon, type IconName } from './md/Icon'
 
 export function GameScreen() {
   const game = useGameStore((s) => s.game)!
@@ -26,30 +27,27 @@ export function GameScreen() {
 
   return (
     <div className="mx-auto flex h-full max-w-md flex-col">
-      {/* Cabeçalho (app bar) — fixo no topo do shell */}
-      <header className="flex shrink-0 items-center justify-between border-b border-line bg-app/95 px-4 pb-3 pt-[calc(0.75rem_+_env(safe-area-inset-top))] backdrop-blur">
-        <button onClick={goHome} className="text-sm text-sub">
-          ≡ Início
-        </button>
-        <h1 className="font-display flex items-center gap-1.5 text-lg font-bold text-ink">
+      {/* Top app bar (MD3) */}
+      <header className="flex h-16 shrink-0 items-center gap-1 bg-app/90 px-1 pt-[env(safe-area-inset-top)] backdrop-blur">
+        <IconButton icon="home" label="Início" onClick={goHome} />
+        <h1 className="font-display flex min-w-0 flex-1 items-center justify-center gap-1.5 text-xl font-bold text-ink">
           <span>{MODE_MOTIF[game.editionId]}</span>
-          {edition.name}
+          <span className="truncate">{edition.name}</span>
         </h1>
         <div className="relative">
-          <button
+          <IconButton
+            icon="more"
+            label="Mais opções"
             onClick={() => setShowMenu((v) => !v)}
-            className="px-2 text-lg text-sub"
-          >
-            ⋮
-          </button>
+          />
           {showMenu && (
-            <div className="absolute right-0 top-9 z-30 w-44 overflow-hidden rounded-lg border border-line bg-surface shadow-xl">
+            <div className="md-elev-2 absolute right-1 top-12 z-30 w-52 overflow-hidden rounded-xl border border-line bg-surface2 py-1">
               <button
                 onClick={() => {
                   setShowMenu(false)
                   goToSetup()
                 }}
-                className="block w-full px-4 py-2.5 text-left text-sm text-ink hover:bg-surface2"
+                className="md-state block w-full px-4 py-3 text-left text-sm text-ink"
               >
                 Reconfigurar partida
               </button>
@@ -59,11 +57,14 @@ export function GameScreen() {
       </header>
 
       {/* Área de conteúdo — a única que rola */}
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4 pt-4">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-8 pt-2">
         {result.contradiction && (
-          <div className="rounded-lg border border-rose-500 bg-rose-500/15 px-3 py-2 text-sm text-rose-200">
-            ⚠ Há informações contraditórias. Revise o histórico ou as marcações
-            manuais.
+          <div className="flex items-start gap-2 rounded-2xl bg-error/15 px-4 py-3 text-sm text-error">
+            <Icon name="close" size={18} className="mt-0.5 shrink-0" />
+            <span>
+              Há informações contraditórias. Revise o histórico ou as marcações
+              manuais.
+            </span>
           </div>
         )}
 
@@ -79,9 +80,9 @@ export function GameScreen() {
               manualMarks={game.manualMarks}
               onCellTap={cycleManualMark}
             />
-            <p className="text-center text-[11px] text-muted">
+            <p className="px-1 text-center text-[11px] leading-relaxed text-muted">
               ✓ tem · ✕ não tem · vazio = indefinido. Toque numa célula para
-              marcar manualmente (• azul).
+              marcar manualmente (• destacado).
             </p>
           </>
         ) : (
@@ -94,32 +95,32 @@ export function GameScreen() {
         )}
       </div>
 
-      {/* Barra inferior (app bar) — parte fixa do shell */}
-      <div className="flex shrink-0 flex-col gap-2 border-t border-line bg-app/95 px-4 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] pt-2 backdrop-blur">
+      {/* Extended FAB (MD3) — ação principal, sobreposto à navegação inferior */}
+      <div className="relative shrink-0">
         <button
           onClick={() => setShowModal(true)}
-          className="w-full rounded-xl bg-accent px-4 py-3.5 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
+          className="md-elev-3 md-state absolute -top-7 right-4 z-10 flex h-14 items-center gap-2 rounded-2xl bg-accentC px-5 font-semibold text-onAccentC"
         >
-          + Registrar palpite
+          <Icon name="add" size={24} />
+          Registrar palpite
         </button>
-        <div className="grid grid-cols-2 gap-1 rounded-xl bg-surface/70 p-1">
-          <button
+
+        {/* Bottom navigation bar (MD3) */}
+        <nav className="flex items-stretch gap-1 border-t border-line bg-app/90 px-2 pb-[env(safe-area-inset-bottom)] pt-2 backdrop-blur">
+          <NavItem
+            icon="grid"
+            label="Preenchimento"
+            active={tab === 'grid'}
             onClick={() => setTab('grid')}
-            className={`rounded-lg py-2 text-sm font-semibold transition ${
-              tab === 'grid' ? 'bg-surface2 text-ink' : 'text-sub'
-            }`}
-          >
-            📋 Preenchimento
-          </button>
-          <button
+          />
+          <NavItem
+            icon="history"
+            label="Histórico"
+            badge={game.events.length}
+            active={tab === 'history'}
             onClick={() => setTab('history')}
-            className={`rounded-lg py-2 text-sm font-semibold transition ${
-              tab === 'history' ? 'bg-surface2 text-ink' : 'text-sub'
-            }`}
-          >
-            🕑 Histórico{game.events.length > 0 ? ` (${game.events.length})` : ''}
-          </button>
-        </div>
+          />
+        </nav>
       </div>
 
       {showModal && (
@@ -134,5 +135,66 @@ export function GameScreen() {
         />
       )}
     </div>
+  )
+}
+
+/** Botão de ícone circular do MD3 (área de toque de 48px). */
+function IconButton({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: IconName
+  label: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={label}
+      className="md-state flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-sub"
+    >
+      <Icon name={icon} size={24} />
+    </button>
+  )
+}
+
+/** Item de uma bottom navigation bar do MD3, com indicador (pílula) no ativo. */
+function NavItem({
+  icon,
+  label,
+  active,
+  badge,
+  onClick,
+}: {
+  icon: IconName
+  label: string
+  active: boolean
+  badge?: number
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex flex-1 flex-col items-center gap-1 py-1"
+    >
+      <span
+        className={`relative flex h-8 w-16 items-center justify-center rounded-full transition-colors ${
+          active ? 'bg-accentC text-onAccentC' : 'text-sub'
+        }`}
+      >
+        <Icon name={icon} size={22} />
+        {badge !== undefined && badge > 0 && (
+          <span className="absolute -right-0.5 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-onAccent">
+            {badge}
+          </span>
+        )}
+      </span>
+      <span
+        className={`text-xs ${active ? 'font-semibold text-ink' : 'text-sub'}`}
+      >
+        {label}
+      </span>
+    </button>
   )
 }

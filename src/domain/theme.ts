@@ -9,7 +9,7 @@ export const MODE_MOTIF: Record<string, string> = {
 /** Cor da barra de status (meta theme-color) por tema. */
 export const MODE_THEME_COLOR: Record<string, string> = {
   mansao: '#17120d',
-  praia: '#06202e',
+  praia: '#061c25',
 }
 
 /** Frase de clima exibida no cabeçalho de cada modo. */

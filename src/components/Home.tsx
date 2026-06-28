@@ -36,7 +36,7 @@ export function Home() {
       {hasSaved && (
         <button
           onClick={resumeGame}
-          className="rounded-xl bg-accent px-4 py-3 font-semibold text-slate-900 shadow transition active:scale-[0.99]"
+          className="md-state md-elev-1 flex items-center justify-center gap-2 rounded-full bg-accent px-4 py-3.5 font-semibold text-onAccent"
         >
           ▶ Continuar partida
         </button>
@@ -53,17 +53,19 @@ export function Home() {
               <button
                 key={edition.id}
                 onClick={() => setEditionId(edition.id)}
-                className={`rounded-xl border-2 px-4 py-5 text-center transition ${
+                className={`md-state rounded-3xl border px-4 py-5 text-center transition ${
                   selected
-                    ? 'border-accent bg-surface text-ink'
-                    : 'border-line bg-surface/40 text-sub'
+                    ? 'border-accent bg-accentC text-onAccentC md-elev-1'
+                    : 'border-line bg-surface text-sub'
                 }`}
               >
                 <div className="text-3xl">{MODE_MOTIF[edition.id]}</div>
                 <div className="font-display mt-1 text-lg font-semibold">
                   {edition.name}
                 </div>
-                <div className="mt-0.5 text-[11px] text-muted">
+                <div
+                  className={`mt-0.5 text-[11px] ${selected ? 'text-onAccentC/80' : 'text-muted'}`}
+                >
                   {MODE_TAGLINE[edition.id]}
                 </div>
               </button>
@@ -83,10 +85,10 @@ export function Home() {
               <button
                 key={n}
                 onClick={() => setPlayerCount(n)}
-                className={`rounded-lg border-2 py-3 text-lg font-semibold transition ${
+                className={`md-state rounded-2xl py-3 text-lg font-semibold transition ${
                   selected
-                    ? 'border-accent bg-surface text-ink'
-                    : 'border-line bg-surface/40 text-sub'
+                    ? 'bg-accent text-onAccent md-elev-1'
+                    : 'bg-surface text-sub'
                 }`}
               >
                 {n}
@@ -104,7 +106,7 @@ export function Home() {
       <div className="shrink-0 border-t border-line bg-app/95 px-5 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] pt-2 backdrop-blur">
         <button
           onClick={() => newGame(editionId, playerCount)}
-          className="w-full rounded-xl bg-emerald-500 px-4 py-3.5 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
+          className="md-state md-elev-1 w-full rounded-full bg-accent px-4 py-3.5 text-lg font-bold text-onAccent"
         >
           Nova partida
         </button>

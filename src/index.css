@@ -4,40 +4,56 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Esquema de cores no padrão Material Design 3 (roles), com dois temas
+ * (Mansão / Praia). Os nomes seguem os "color roles" do MD3:
+ *   surface / surface-container(-high/-highest) -> fundos e cards
+ *   on-surface / on-surface-variant             -> textos
+ *   primary / on-primary / primary-container    -> ação principal
+ *   outline / outline-variant                   -> bordas
+ *   error / on-error                            -> estados de erro
+ */
 :root {
   color-scheme: dark;
-
-  /* Tema padrão = Mansão (noir / madeira / dourado) */
+  /* Fallback (= Mansão) para o body, antes do [data-theme] no contêiner do app. */
   --c-app: 23 18 13;
-  --c-surface: 38 29 21;
-  --c-surface2: 56 42 28;
-  --c-line: 74 58 40;
-  --c-ink: 243 237 227;
-  --c-sub: 197 178 152;
-  --c-muted: 138 120 97;
-  --c-accent: 212 175 55;
+  --c-ink: 240 234 224;
 }
 
 [data-theme='mansao'] {
-  --c-app: 23 18 13;
-  --c-surface: 38 29 21;
-  --c-surface2: 56 42 28;
-  --c-line: 74 58 40;
-  --c-ink: 243 237 227;
-  --c-sub: 197 178 152;
-  --c-muted: 138 120 97;
-  --c-accent: 212 175 55;
+  --c-app: 23 18 13; /* surface */
+  --c-surface: 38 30 22; /* surface-container */
+  --c-surface2: 50 40 29; /* surface-container-high */
+  --c-surface3: 62 50 36; /* surface-container-highest */
+  --c-line: 74 62 46; /* outline-variant */
+  --c-outline: 140 122 96; /* outline */
+  --c-ink: 240 234 224; /* on-surface */
+  --c-sub: 205 190 165; /* on-surface-variant */
+  --c-muted: 150 132 106; /* on-surface (dim) */
+  --c-accent: 212 175 55; /* primary */
+  --c-on-accent: 38 28 0; /* on-primary */
+  --c-accent-c: 90 70 22; /* primary-container */
+  --c-on-accent-c: 245 224 150; /* on-primary-container */
+  --c-error: 240 110 118; /* error */
+  --c-on-error: 50 0 8; /* on-error */
 }
 
 [data-theme='praia'] {
-  --c-app: 6 32 46;
-  --c-surface: 12 50 68;
-  --c-surface2: 17 67 90;
-  --c-line: 29 95 122;
-  --c-ink: 233 250 255;
-  --c-sub: 159 196 214;
-  --c-muted: 110 150 170;
-  --c-accent: 34 211 238;
+  --c-app: 6 28 37; /* surface */
+  --c-surface: 12 44 57; /* surface-container */
+  --c-surface2: 17 56 72; /* surface-container-high */
+  --c-surface3: 23 68 86; /* surface-container-highest */
+  --c-line: 30 78 96; /* outline-variant */
+  --c-outline: 96 140 158; /* outline */
+  --c-ink: 230 246 251; /* on-surface */
+  --c-sub: 168 204 217; /* on-surface-variant */
+  --c-muted: 112 152 170; /* on-surface (dim) */
+  --c-accent: 38 198 218; /* primary */
+  --c-on-accent: 0 30 36; /* on-primary */
+  --c-accent-c: 14 70 84; /* primary-container */
+  --c-on-accent-c: 170 235 245; /* on-primary-container */
+  --c-error: 255 120 130; /* error */
+  --c-on-error: 50 0 8; /* on-error */
 }
 
 html,
@@ -81,6 +97,47 @@ body {
 .font-display {
   font-family: 'Playfair Display Variable', Georgia, serif;
 }
+
+/* Elevação no estilo Material Design 3 (sombras dos níveis 1–3). */
+.md-elev-1 {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 1px 3px 1px rgba(0, 0, 0, 0.15);
+}
+.md-elev-2 {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 2px 6px 2px rgba(0, 0, 0, 0.15);
+}
+.md-elev-3 {
+  box-shadow:
+    0 4px 8px 3px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/*
+ * "State layer" do MD3: camada de cor sobre o componente ao pressionar/passar.
+ * Aplicada via ::after para não alterar o layout.
+ */
+.md-state {
+  position: relative;
+  isolation: isolate;
+}
+.md-state::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 120ms ease;
+  pointer-events: none;
+}
+.md-state:active::after {
+  opacity: 0.12;
+}
+
+/* Tipografia de exibição (títulos) usa a serifada; corpo usa Roboto/system. */
 
 /* Evita zoom indesejado em inputs no iOS (fonte >= 16px) */
 input,

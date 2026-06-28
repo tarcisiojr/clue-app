@@ -7,6 +7,7 @@ import {
 } from '../domain/editions'
 import { CATEGORY_ICON } from '../domain/theme'
 import { useGameStore } from '../state/gameStore'
+import { Chip } from './md/Chip'
 
 export function Setup() {
   const game = useGameStore((s) => s.game)!
@@ -60,14 +61,14 @@ export function Setup() {
           {game.players.map((player, index) => (
             <div
               key={player.id}
-              className="flex items-center gap-2 rounded-lg bg-surface/60 p-2"
+              className="flex items-center gap-2 rounded-2xl bg-surface p-2"
             >
               <button
                 onClick={() => setMe(index)}
                 title="Marcar como você"
-                className={`h-9 shrink-0 rounded-md px-2 text-xs font-bold transition ${
+                className={`md-state h-9 shrink-0 rounded-lg px-2.5 text-xs font-bold transition ${
                   player.isMe
-                    ? 'bg-accent text-slate-900'
+                    ? 'bg-accent text-onAccent'
                     : 'bg-surface2 text-sub'
                 }`}
               >
@@ -76,12 +77,14 @@ export function Setup() {
               <input
                 value={player.name}
                 onChange={(e) => setPlayerName(index, e.target.value)}
-                className="min-w-0 flex-1 rounded-md bg-app px-2 py-2 text-ink outline-none focus:ring-1 focus:ring-accent"
+                onFocus={(e) => e.target.select()}
+                className="min-w-0 flex-1 rounded-lg bg-app px-3 py-2 text-ink outline-none focus:ring-2 focus:ring-accent"
               />
               <div className="flex shrink-0 items-center gap-1">
                 <button
                   onClick={() => setHandSize(index, player.handSize - 1)}
-                  className="h-9 w-9 rounded-md bg-surface2 text-lg text-ink"
+                  aria-label="Menos uma carta"
+                  className="md-state flex h-9 w-9 items-center justify-center rounded-full bg-surface2 text-lg text-ink"
                 >
                   −
                 </button>
@@ -90,7 +93,8 @@ export function Setup() {
                 </span>
                 <button
                   onClick={() => setHandSize(index, player.handSize + 1)}
-                  className="h-9 w-9 rounded-md bg-surface2 text-lg text-ink"
+                  aria-label="Mais uma carta"
+                  className="md-state flex h-9 w-9 items-center justify-center rounded-full bg-surface2 text-lg text-ink"
                 >
                   +
                 </button>
@@ -125,22 +129,15 @@ export function Setup() {
             <div className="flex flex-wrap gap-2">
               {edition.cards
                 .filter((c) => c.category === category)
-                .map((card) => {
-                  const selected = game.myHand.includes(card.id)
-                  return (
-                    <button
-                      key={card.id}
-                      onClick={() => toggleMyHandCard(card.id)}
-                      className={`rounded-full border px-3 py-1.5 text-sm transition ${
-                        selected
-                          ? 'border-emerald-500 bg-emerald-500/20 text-emerald-200'
-                          : 'border-line bg-surface/40 text-sub'
-                      }`}
-                    >
-                      {card.name}
-                    </button>
-                  )
-                })}
+                .map((card) => (
+                  <Chip
+                    key={card.id}
+                    label={card.name}
+                    tone="success"
+                    selected={game.myHand.includes(card.id)}
+                    onClick={() => toggleMyHandCard(card.id)}
+                  />
+                ))}
             </div>
           </div>
         ))}
@@ -173,22 +170,14 @@ export function Setup() {
               <div className="flex flex-wrap gap-2">
                 {edition.cards
                   .filter((c) => c.category === category)
-                  .map((card) => {
-                    const selected = commonCards.includes(card.id)
-                    return (
-                      <button
-                        key={card.id}
-                        onClick={() => toggleCommonCard(card.id)}
-                        className={`rounded-full border px-3 py-1.5 text-sm transition ${
-                          selected
-                            ? 'border-accent bg-accent/20 text-accent'
-                            : 'border-line bg-surface/40 text-sub'
-                        }`}
-                      >
-                        {card.name}
-                      </button>
-                    )
-                  })}
+                  .map((card) => (
+                    <Chip
+                      key={card.id}
+                      label={card.name}
+                      selected={commonCards.includes(card.id)}
+                      onClick={() => toggleCommonCard(card.id)}
+                    />
+                  ))}
               </div>
             </div>
           ))}
@@ -199,13 +188,13 @@ export function Setup() {
       <section className="flex flex-col gap-2">
         <button
           onClick={() => setShowNames((v) => !v)}
-          className="flex items-center justify-between rounded-lg bg-surface/60 px-3 py-2 text-sm text-sub"
+          className="md-state flex items-center justify-between rounded-2xl bg-surface px-4 py-3 text-sm text-sub"
         >
           <span>Editar nomes das cartas</span>
           <span>{showNames ? '▲' : '▼'}</span>
         </button>
         {showNames && (
-          <div className="flex flex-col gap-3 rounded-lg bg-surface/40 p-3">
+          <div className="flex flex-col gap-3 rounded-2xl bg-surface p-3">
             <p className="text-xs text-muted">
               Ajuste os nomes conforme suas cartas (ex.: locais do modo Praia).
             </p>
@@ -220,9 +209,10 @@ export function Setup() {
                     <input
                       key={card.id}
                       defaultValue={game.cardNames[card.id] ?? card.name}
+                      onFocus={(e) => e.target.select()}
                       onBlur={(e) => renameCard(card.id, e.target.value)}
                       placeholder={card.name}
-                      className="rounded-md bg-app px-2 py-1.5 text-sm text-ink outline-none focus:ring-1 focus:ring-accent"
+                      className="rounded-lg bg-app px-3 py-2 text-sm text-ink outline-none focus:ring-2 focus:ring-accent"
                     />
                   ))}
               </div>
@@ -236,7 +226,7 @@ export function Setup() {
       <div className="shrink-0 border-t border-line bg-app/95 px-4 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] pt-2 backdrop-blur">
         <button
           onClick={startGame}
-          className="w-full rounded-xl bg-emerald-500 px-4 py-3.5 text-lg font-bold text-slate-900 shadow-lg transition active:scale-[0.99]"
+          className="md-state md-elev-1 w-full rounded-full bg-accent px-4 py-3.5 text-lg font-bold text-onAccent"
         >
           Começar partida
         </button>

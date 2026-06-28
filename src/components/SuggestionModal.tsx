@@ -6,6 +6,8 @@ import type {
   Player,
   SuggestionResponse,
 } from '../domain/types'
+import { Icon } from './md/Icon'
+import { Chip } from './md/Chip'
 
 type RespKind = 'none' | 'pass' | 'showed'
 interface RespState {
@@ -63,49 +65,53 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60">
-      <div className="flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl bg-app">
-        <header className="flex items-center justify-between border-b border-line px-4 py-3">
-          <button onClick={onClose} className="text-sm text-sub">
-            Cancelar
+      <div className="flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-3xl bg-app">
+        {/* Alça de bottom sheet (MD3) */}
+        <div className="flex justify-center pb-1 pt-2">
+          <span className="h-1 w-9 rounded-full bg-outline/50" />
+        </div>
+        <header className="flex items-center justify-between px-2 pb-2">
+          <button
+            onClick={onClose}
+            aria-label="Cancelar"
+            className="md-state flex h-12 w-12 items-center justify-center rounded-full text-sub"
+          >
+            <Icon name="close" size={22} />
           </button>
-          <h2 className="font-bold text-ink">Registrar palpite</h2>
+          <h2 className="font-display text-lg font-bold text-ink">
+            Registrar palpite
+          </h2>
           <button
             onClick={handleSave}
-            className="rounded-lg bg-emerald-500 px-3 py-1.5 text-sm font-bold text-slate-900"
+            className="md-state rounded-full bg-accent px-4 py-2 text-sm font-bold text-onAccent"
           >
             Salvar
           </button>
         </header>
 
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 pt-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))]">
+        <div className="flex flex-col gap-5 overflow-y-auto px-4 pt-2 pb-[calc(1rem_+_env(safe-area-inset-bottom))]">
           {/* Quem fez o palpite */}
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase text-muted">
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted">
               Quem fez o palpite
             </label>
             <div className="flex flex-wrap gap-2">
               {players.map((p) => (
-                <button
+                <Chip
                   key={p.id}
+                  label={p.isMe ? `${p.name} (você)` : p.name}
+                  selected={p.id === suggesterId}
                   onClick={() => setSuggesterId(p.id)}
-                  className={`rounded-full border px-3 py-1.5 text-sm ${
-                    p.id === suggesterId
-                      ? 'border-accent bg-accent/20 text-accent'
-                      : 'border-line text-sub'
-                  }`}
-                >
-                  {p.name}
-                  {p.isMe ? ' (você)' : ''}
-                </button>
+                />
               ))}
             </div>
           </div>
 
           {/* As 3 cartas do palpite */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             {CATEGORY_ORDER.map((category) => (
               <div key={category}>
-                <label className="mb-1 block text-xs font-semibold uppercase text-muted">
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted">
                   {CATEGORY_LABELS[category]}
                 </label>
                 <select
@@ -113,7 +119,7 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
                   onChange={(e) =>
                     setPicks((p) => ({ ...p, [category]: e.target.value }))
                   }
-                  className="w-full rounded-lg bg-surface px-3 py-2.5 text-ink outline-none focus:ring-1 focus:ring-accent"
+                  className="w-full rounded-xl bg-surface px-3 py-3 text-ink outline-none focus:ring-2 focus:ring-accent"
                 >
                   {edition.cards
                     .filter((c) => c.category === category)
@@ -129,7 +135,7 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
 
           {/* Respostas dos jogadores */}
           <div className="flex flex-col gap-2">
-            <label className="block text-xs font-semibold uppercase text-muted">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-muted">
               Respostas (sentido horário)
             </label>
             {players
@@ -139,13 +145,13 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
                 return (
                   <div
                     key={p.id}
-                    className="rounded-lg bg-surface/60 p-2"
+                    className="rounded-2xl bg-surface p-3"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="min-w-0 flex-1 truncate text-sm text-ink">
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink">
                         {p.name}
                       </span>
-                      <div className="flex shrink-0 overflow-hidden rounded-md border border-line">
+                      <div className="flex shrink-0 overflow-hidden rounded-full border border-line">
                         {(
                           [
                             ['none', '—'],
@@ -156,13 +162,13 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
                           <button
                             key={kind}
                             onClick={() => setResp(p.id, { kind })}
-                            className={`px-3 py-1.5 text-xs font-semibold ${
+                            className={`px-3.5 py-2 text-xs font-semibold transition ${
                               r.kind === kind
                                 ? kind === 'showed'
-                                  ? 'bg-emerald-500 text-slate-900'
+                                  ? 'bg-emerald-500 text-onAccent'
                                   : kind === 'pass'
-                                    ? 'bg-rose-500 text-slate-900'
-                                    : 'bg-surface2 text-ink'
+                                    ? 'bg-error text-onError'
+                                    : 'bg-surface3 text-ink'
                                 : 'text-sub'
                             }`}
                           >
@@ -172,7 +178,7 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
                       </div>
                     </div>
                     {r.kind === 'showed' && (
-                      <div className="mt-2">
+                      <div className="mt-2.5">
                         <label className="mb-1 block text-[11px] text-muted">
                           Qual carta? (só se você viu)
                         </label>
@@ -184,7 +190,7 @@ export function SuggestionModal({ edition, players, onClose, onSave }: Props) {
                               cardShown: e.target.value || undefined,
                             })
                           }
-                          className="w-full rounded-md bg-app px-2 py-2 text-sm text-ink outline-none focus:ring-1 focus:ring-accent"
+                          className="w-full rounded-xl bg-app px-3 py-2.5 text-sm text-ink outline-none focus:ring-2 focus:ring-accent"
                         >
                           <option value="">Não vi qual</option>
                           {chosenCards.map((id) => {
