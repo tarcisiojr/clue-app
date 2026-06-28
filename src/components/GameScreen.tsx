@@ -49,35 +49,35 @@ export function GameScreen() {
             <span>{MODE_MOTIF[game.editionId]}</span>
             <span className="truncate">{edition.name}</span>
           </h1>
-          <div className="relative">
-            <IconButton
-              icon="more"
-              label="Mais opções"
-              onClick={() => setShowMenu((v) => !v)}
-            />
-            {showMenu && (
-              <>
-                {/* Backdrop invisível: toque fora fecha o menu */}
-                <div
-                  className="fixed inset-0 z-40"
-                  onClick={() => setShowMenu(false)}
-                />
-                <div className="md-elev-3 animate-fade-in absolute right-1 top-11 z-50 w-56 origin-top-right overflow-hidden rounded-2xl bg-surface3 py-1">
-                  <button
-                    onClick={() => {
-                      setShowMenu(false)
-                      goToSetup()
-                    }}
-                    className="md-state block w-full px-4 py-3 text-left text-sm text-ink"
-                  >
-                    Reconfigurar partida
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+          <IconButton
+            icon="more"
+            label="Mais opções"
+            onClick={() => setShowMenu((v) => !v)}
+          />
         </div>
       </header>
+
+      {/* Menu de overflow — renderizado na raiz (fora do backdrop-blur do header,
+          que prenderia o z-index e o backdrop ao próprio header). */}
+      {showMenu && (
+        <>
+          <div
+            className="absolute inset-0 z-40"
+            onClick={() => setShowMenu(false)}
+          />
+          <div className="md-elev-3 animate-fade-in absolute right-2 top-[calc(3.25rem_+_env(safe-area-inset-top))] z-50 w-56 origin-top-right overflow-hidden rounded-2xl bg-surface3 py-1">
+            <button
+              onClick={() => {
+                setShowMenu(false)
+                goToSetup()
+              }}
+              className="md-state block w-full px-4 py-3 text-left text-sm text-ink"
+            >
+              Reconfigurar partida
+            </button>
+          </div>
+        </>
+      )}
 
       {/* Barra de solução compacta (abre o drawer com o detalhe) */}
       <div className="shrink-0 px-3 pb-1.5">
@@ -92,7 +92,7 @@ export function GameScreen() {
       )}
 
       {/* Área de conteúdo — preenche a tela e rola internamente (flex p/ robustez no mobile) */}
-      <div key={tab} className="animate-fade-in flex min-h-0 flex-1 flex-col px-3 pb-2">
+      <div key={tab} className="animate-fade-in flex min-h-0 flex-1 flex-col px-3 pb-1.5">
         {tab === 'grid' ? (
           <Grid
             edition={edition}
