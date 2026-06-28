@@ -35,7 +35,7 @@ export function Grid({ edition, result, players, manualMarks, onCellTap }: Props
   ]
 
   return (
-    <div className="md-elev-1 h-full overflow-auto rounded-2xl bg-surface">
+    <div className="md-elev-1 min-h-0 flex-1 overflow-auto rounded-2xl bg-surface">
       <table className="w-full border-collapse text-center">
         <thead>
           {/* Cabeçalho congelado no topo ao rolar verticalmente. */}

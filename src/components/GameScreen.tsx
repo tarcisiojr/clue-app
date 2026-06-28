@@ -40,10 +40,10 @@ export function GameScreen() {
 
   return (
     <div className="relative mx-auto flex h-full max-w-md flex-col">
-      {/* Top app bar (MD3) */}
-      <header className="flex h-16 shrink-0 items-center gap-1 bg-app/90 px-1 pt-[env(safe-area-inset-top)] backdrop-blur">
+      {/* Top app bar (MD3, compacta) */}
+      <header className="flex h-12 shrink-0 items-center gap-1 bg-app/90 px-1 pt-[env(safe-area-inset-top)] backdrop-blur">
         <IconButton icon="home" label="Início" onClick={goHome} />
-        <h1 className="font-display flex min-w-0 flex-1 items-center justify-center gap-1.5 text-xl font-bold text-ink">
+        <h1 className="font-display flex min-w-0 flex-1 items-center gap-1.5 text-lg text-ink">
           <span>{MODE_MOTIF[game.editionId]}</span>
           <span className="truncate">{edition.name}</span>
         </h1>
@@ -60,7 +60,7 @@ export function GameScreen() {
                 className="fixed inset-0 z-40"
                 onClick={() => setShowMenu(false)}
               />
-              <div className="md-elev-3 animate-fade-in absolute right-1 top-12 z-50 w-56 origin-top-right overflow-hidden rounded-2xl bg-surface3 py-1">
+              <div className="md-elev-3 animate-fade-in absolute right-1 top-11 z-50 w-56 origin-top-right overflow-hidden rounded-2xl bg-surface3 py-1">
                 <button
                   onClick={() => {
                     setShowMenu(false)
@@ -77,19 +77,19 @@ export function GameScreen() {
       </header>
 
       {/* Barra de solução compacta (abre o drawer com o detalhe) */}
-      <div className="shrink-0 px-4 pb-2">
+      <div className="shrink-0 px-3 pb-1.5">
         <SolutionDrawer edition={edition} result={result} />
       </div>
 
       {result.contradiction && (
-        <div className="mx-4 mb-2 flex shrink-0 items-start gap-2 rounded-2xl bg-error/15 px-4 py-2.5 text-sm text-error">
+        <div className="mx-3 mb-1.5 flex shrink-0 items-start gap-2 rounded-2xl bg-error/15 px-4 py-2.5 text-sm text-error">
           <Icon name="close" size={18} className="mt-0.5 shrink-0" />
           <span>Informações contraditórias. Revise o histórico ou as marcações.</span>
         </div>
       )}
 
-      {/* Área de conteúdo — preenche a tela e rola internamente */}
-      <div key={tab} className="animate-fade-in min-h-0 flex-1 px-4 pb-2">
+      {/* Área de conteúdo — preenche a tela e rola internamente (flex p/ robustez no mobile) */}
+      <div key={tab} className="animate-fade-in flex min-h-0 flex-1 flex-col px-3 pb-2">
         {tab === 'grid' ? (
           <Grid
             edition={edition}
@@ -99,7 +99,7 @@ export function GameScreen() {
             onCellTap={handleCellTap}
           />
         ) : (
-          <div className="h-full overflow-y-auto">
+          <div className="min-h-0 flex-1 overflow-y-auto">
             <EventHistory
               edition={edition}
               players={game.players}
@@ -117,7 +117,7 @@ export function GameScreen() {
           setShowModal(true)
         }}
         aria-label="Registrar palpite"
-        className="md-elev-3 md-state absolute bottom-[calc(5.5rem_+_env(safe-area-inset-bottom))] right-4 z-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-accentC text-onAccentC"
+        className="md-elev-3 md-state absolute bottom-[calc(5.25rem_+_env(safe-area-inset-bottom))] right-4 z-10 flex h-14 w-14 items-center justify-center rounded-2xl bg-accentC text-onAccentC transition active:scale-95"
       >
         <Icon name="add" size={28} />
       </button>
