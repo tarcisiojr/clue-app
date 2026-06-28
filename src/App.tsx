@@ -21,13 +21,14 @@ export default function App() {
 
   const showHome = phase === 'home' || !hasGame
 
-  // App shell: `fixed inset-0` preenche exatamente o viewport (mais confiável
-  // que 100dvh, que no iOS às vezes reporta menos que a tela e deixa sobra).
-  // O body não rola; só a área de conteúdo de cada tela rola, como num app.
+  // App shell: cadeia height:100% (html → body → #root → app) preenche o viewport
+  // do PWA standalone INCLUINDO as safe areas — assim a barra inferior cobre a
+  // zona do home indicator (em vez de sobrar o fundo). O body não rola; só a
+  // área de conteúdo de cada tela rola, como num app nativo.
   return (
     <div
       data-theme={theme}
-      className="app-bg fixed inset-0 overflow-hidden"
+      className="app-bg h-full overflow-hidden"
     >
       {showHome && <Home />}
       {!showHome && phase === 'setup' && <Setup />}
