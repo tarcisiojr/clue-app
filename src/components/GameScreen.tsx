@@ -40,39 +40,42 @@ export function GameScreen() {
 
   return (
     <div className="relative mx-auto flex h-full max-w-md flex-col">
-      {/* Top app bar (MD3, compacta) */}
-      <header className="flex h-12 shrink-0 items-center gap-1 bg-app/90 px-1 pt-[env(safe-area-inset-top)] backdrop-blur">
-        <IconButton icon="home" label="Início" onClick={goHome} />
-        <h1 className="font-display flex min-w-0 flex-1 items-center gap-1.5 text-lg text-ink">
-          <span>{MODE_MOTIF[game.editionId]}</span>
-          <span className="truncate">{edition.name}</span>
-        </h1>
-        <div className="relative">
-          <IconButton
-            icon="more"
-            label="Mais opções"
-            onClick={() => setShowMenu((v) => !v)}
-          />
-          {showMenu && (
-            <>
-              {/* Backdrop invisível: toque fora fecha o menu */}
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setShowMenu(false)}
-              />
-              <div className="md-elev-3 animate-fade-in absolute right-1 top-11 z-50 w-56 origin-top-right overflow-hidden rounded-2xl bg-surface3 py-1">
-                <button
-                  onClick={() => {
-                    setShowMenu(false)
-                    goToSetup()
-                  }}
-                  className="md-state block w-full px-4 py-3 text-left text-sm text-ink"
-                >
-                  Reconfigurar partida
-                </button>
-              </div>
-            </>
-          )}
+      {/* Top app bar (MD3, compacta). A safe area é padding do header; a altura
+          fixa (48px) fica num div interno, senão o notch engole a barra. */}
+      <header className="shrink-0 bg-app/90 px-1 pt-[env(safe-area-inset-top)] backdrop-blur">
+        <div className="flex h-12 items-center gap-1">
+          <IconButton icon="home" label="Início" onClick={goHome} />
+          <h1 className="font-display flex min-w-0 flex-1 items-center gap-1.5 text-lg text-ink">
+            <span>{MODE_MOTIF[game.editionId]}</span>
+            <span className="truncate">{edition.name}</span>
+          </h1>
+          <div className="relative">
+            <IconButton
+              icon="more"
+              label="Mais opções"
+              onClick={() => setShowMenu((v) => !v)}
+            />
+            {showMenu && (
+              <>
+                {/* Backdrop invisível: toque fora fecha o menu */}
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowMenu(false)}
+                />
+                <div className="md-elev-3 animate-fade-in absolute right-1 top-11 z-50 w-56 origin-top-right overflow-hidden rounded-2xl bg-surface3 py-1">
+                  <button
+                    onClick={() => {
+                      setShowMenu(false)
+                      goToSetup()
+                    }}
+                    className="md-state block w-full px-4 py-3 text-left text-sm text-ink"
+                  >
+                    Reconfigurar partida
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </header>
 
