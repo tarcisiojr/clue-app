@@ -95,11 +95,10 @@ export function GameScreen() {
         </div>
       )}
 
-      {/* Área de conteúdo — preenche a tela e rola internamente. O pb reserva o
-          espaço da barra inferior fixa (que fica colada ao fundo do viewport). */}
+      {/* Área de conteúdo — preenche a tela e rola internamente */}
       <div
         key={tab}
-        className="animate-fade-in flex min-h-0 flex-1 flex-col px-3 pb-[calc(4.5rem_+_env(safe-area-inset-bottom))]"
+        className="animate-fade-in flex min-h-0 flex-1 flex-col px-3 pb-1.5"
       >
         {tab === 'grid' ? (
           <Grid
@@ -128,15 +127,14 @@ export function GameScreen() {
           setShowModal(true)
         }}
         aria-label="Registrar palpite"
-        className="md-elev-3 md-state fixed bottom-[calc(5.75rem_+_env(safe-area-inset-bottom))] right-4 z-30 flex h-14 w-14 items-center justify-center rounded-2xl bg-accentC text-onAccentC transition active:scale-95"
+        className="md-elev-3 md-state absolute bottom-[calc(5.25rem_+_env(safe-area-inset-bottom))] right-4 z-10 flex h-14 w-14 items-center justify-center rounded-2xl bg-accentC text-onAccentC transition active:scale-95"
       >
         <Icon name="add" size={28} />
       </button>
 
-      {/* Bottom navigation bar (MD3) PRESA ao fundo do viewport (position: fixed),
-          independente da altura do container — garante encostar na base da tela.
-          Fundo sólido = mesma cor do body p/ cobrir a zona do home indicator. */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto flex max-w-md items-stretch gap-1 border-t border-line bg-app px-2 pb-[env(safe-area-inset-bottom)] pt-2">
+      {/* Bottom navigation bar (MD3). Fundo sólido = mesma cor do body, p/ a faixa
+          do home indicator (safe area) ficar contínua. */}
+      <nav className="flex shrink-0 items-stretch gap-1 border-t border-line bg-app px-2 pb-[env(safe-area-inset-bottom)] pt-2">
         <NavItem
           icon="grid"
           label="Preenchimento"

@@ -222,8 +222,8 @@ export function Setup() {
       </section>
       </div>
 
-      {/* Barra inferior fixa do shell */}
-      <div className="shrink-0 border-t border-line bg-app/95 px-4 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] pt-2 backdrop-blur">
+      {/* Barra inferior do shell */}
+      <div className="shrink-0 border-t border-line bg-app px-4 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] pt-2">
         <button
           onClick={startGame}
           className="md-state md-elev-1 w-full rounded-full bg-accent px-4 py-3.5 text-lg font-bold text-onAccent"

@@ -13,9 +13,7 @@ export default function App() {
   // Na Home (sem partida) usa o tema padrão (Mansão); nas demais telas, o do modo.
   const theme = phase === 'home' || !hasGame ? 'mansao' : themeFor(editionId)
 
-  // Sincroniza a cor do tema com: (1) a barra de status; (2) o fundo de html/body.
-  // Pintar html/body com a cor do tema garante que qualquer faixa de safe area
-  // (zona do home indicator no PWA) fique invisível — mesma cor da barra inferior.
+  // Sincroniza a cor do tema com a barra de status e o fundo de html/body.
   useEffect(() => {
     const color = MODE_THEME_COLOR[theme] ?? '#17120d'
     const meta = document.querySelector('meta[name="theme-color"]')
@@ -24,14 +22,34 @@ export default function App() {
     document.body.style.backgroundColor = color
   }, [theme])
 
+  // Altura real do viewport via window.innerHeight — no PWA standalone do iOS o
+  // 100dvh/100% às vezes reporta menos que a tela, deixando uma faixa embaixo.
+  // Medir com JS e aplicar como variável CSS resolve em qualquer aparelho.
+  useEffect(() => {
+    const setHeight = () => {
+      document.documentElement.style.setProperty(
+        '--app-height',
+        `${window.innerHeight}px`,
+      )
+    }
+    setHeight()
+    window.addEventListener('resize', setHeight)
+    window.addEventListener('orientationchange', setHeight)
+    return () => {
+      window.removeEventListener('resize', setHeight)
+      window.removeEventListener('orientationchange', setHeight)
+    }
+  }, [])
+
   const showHome = phase === 'home' || !hasGame
 
-  // App shell: preenche o viewport do PWA (100dvh + cadeia height:100%) e o body
-  // não rola; só a área de conteúdo de cada tela rola, como num app nativo.
+  // App shell: altura medida por JS (fallback 100dvh). O body não rola; só a área
+  // de conteúdo de cada tela rola, como num app nativo.
   return (
     <div
       data-theme={theme}
-      className="app-bg h-[100dvh] overflow-hidden"
+      className="app-bg overflow-hidden"
+      style={{ height: 'var(--app-height, 100dvh)' }}
     >
       {showHome && <Home />}
       {!showHome && phase === 'setup' && <Setup />}
