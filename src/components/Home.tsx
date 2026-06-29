@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { EDITIONS } from '../domain/editions'
 import { MODE_MOTIF, MODE_TAGLINE } from '../domain/theme'
 import { useGameStore } from '../state/gameStore'
+import { VERSION_LABEL } from '../version'
 
 const PLAYER_OPTIONS = [2, 3, 4, 5, 6]
 
@@ -115,6 +116,7 @@ export function Home() {
             Iniciar uma nova partida substitui a atual.
           </p>
         )}
+        <p className="mt-1.5 text-center text-[11px] text-muted">{VERSION_LABEL}</p>
       </div>
     </div>
   )

@@ -1,12 +1,23 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import pkg from './package.json'
 
 // Caminho base no GitHub Pages: https://<usuario>.github.io/clue-app/
 const BASE = '/clue-app/'
 
+// Carimbo de build (data/hora) — injetado no app para confirmar atualizações.
+const BUILD_TIME = new Date()
+  .toISOString()
+  .slice(0, 16)
+  .replace('T', ' ')
+
 export default defineConfig({
   base: BASE,
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+    __BUILD_TIME__: JSON.stringify(BUILD_TIME),
+  },
   plugins: [
     react(),
     VitePWA({

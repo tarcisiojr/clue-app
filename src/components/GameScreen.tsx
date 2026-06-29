@@ -9,6 +9,7 @@ import { SuggestionModal } from './SuggestionModal'
 import { Icon, type IconName } from './md/Icon'
 import { Snackbar } from './md/Snackbar'
 import { tapLight, tapMedium } from '../lib/haptics'
+import { VERSION_LABEL } from '../version'
 
 export function GameScreen() {
   const game = useGameStore((s) => s.game)!
@@ -65,7 +66,7 @@ export function GameScreen() {
             className="absolute inset-0 z-40"
             onClick={() => setShowMenu(false)}
           />
-          <div className="md-elev-3 animate-fade-in absolute right-2 top-[calc(3.25rem_+_env(safe-area-inset-top))] z-50 w-56 origin-top-right overflow-hidden rounded-2xl bg-surface3 py-1">
+          <div className="md-elev-3 animate-fade-in absolute right-2 top-[calc(3.25rem_+_env(safe-area-inset-top))] z-50 w-60 origin-top-right overflow-hidden rounded-2xl bg-surface3 py-1">
             <button
               onClick={() => {
                 setShowMenu(false)
@@ -75,6 +76,9 @@ export function GameScreen() {
             >
               Reconfigurar partida
             </button>
+            <div className="border-t border-line px-4 py-2 text-[11px] text-muted">
+              {VERSION_LABEL}
+            </div>
           </div>
         </>
       )}
